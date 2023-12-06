@@ -1,0 +1,14 @@
+.dpo_pay{
+    border-radius: 10px;
+    border: 1px solid #03A9F4;
+    display: flex;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.payment_logos{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 5px 0px;
+}
