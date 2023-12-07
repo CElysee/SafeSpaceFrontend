@@ -134,7 +134,7 @@ function Profile() {
                   </form>
                 </div>
                 <div className="tab-pane" id="changePassword" role="tabpanel">
-                  <form action="javascript:void(0);">
+                  <form>
                     <div className="row g-2">
                       <div className="col-lg-6">
                         <div>

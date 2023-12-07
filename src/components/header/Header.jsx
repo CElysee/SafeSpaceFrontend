@@ -10,74 +10,40 @@ function Header(props) {
   const [userName, setUserName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-  if (access_token) {
-    useEffect(() => {
-      const getUser = async () => {
-        try {
-          const response = await axiosInstance.get("auth/users/me", {
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${access_token}`,
-            },
-          });
-          setUserName(response.data.name);
-          setIsLoggedIn(true);
-        } catch (error) {
-          if (error.response.status === 401 || error.response.status === 406) {
-            navigate("/sign-in");
-          }
-          console.log(error);
-        }
-      };
-      getUser();
-    }, []);
-    const handleLogout = () => {
-      setIsLoggedIn(false);
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("user_role");
-      localStorage.removeItem("user_id");
-      navigate("/sign-in");
-    };
-    useEffect(() => {
-      // Check if user_id exists in localStorage
-      const user_id = localStorage.getItem("user_id");
-      const access_token = localStorage.getItem("access_token");
-      if (user_id) {
-        setUserId(userId); // Set isLoggedIn to true if user_id exists
-      }
-      if (access_token) {
-        setAccess_token(access_token);
-        setIsLoggedIn(true);
-      }
-    }, []);
-  }
-  useEffect(() => {
-    const access_token = localStorage.getItem("access_token");
-    const user_id = localStorage.getItem("user_id");
-    setAccess_token(access_token);  
-    setUserId(user_id);
-  
-    if (access_token) {
-      const getUser = async () => {
-        try {
-          const response = await axiosInstance.get("auth/users/me", {
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${access_token}`,
-            },
-          });
-          setUserName(response.data.name);
-          setIsLoggedIn(true);
-        } catch (error) {
-          if (error.response.status === 401 || error.response.status === 406) {
-            navigate("/sign-in");
-          }
-          console.log(error);
-        }
-      };
-      getUser();
-    }
-  }, []);
+
+  // useEffect(() => {
+  //   if (access_token) {
+  //     const getUser = async () => {
+  //       try {
+  //         const response = await axiosInstance.get("auth/users/me", {
+  //           headers: {
+  //             Accept: "application/json",
+  //             Authorization: `Bearer ${access_token}`,
+  //           },
+  //         });
+  //         setUserName(response.data.name);
+  //         setIsLoggedIn(true);
+  //       } catch (error) {
+  //         if (error.response.status === 401 || error.response.status === 406) {
+  //           navigate("/sign-in");
+  //         }
+  //         console.log(error);
+  //       }
+  //     };
+  //     getUser();
+  //   }
+  //   // Check if user_id exists in localStorage
+  //   setUserId(localStorage.getItem("user_id"));
+  //   setAccess_token(localStorage.getItem("access_token"));
+  // }, []);
+
+  // const handleLogout = () => {
+  //   setIsLoggedIn(false);
+  //   localStorage.removeItem("access_token");
+  //   localStorage.removeItem("user_role");
+  //   localStorage.removeItem("user_id");
+  //   navigate("/sign-in");
+  // };
 
   return (
     <div>

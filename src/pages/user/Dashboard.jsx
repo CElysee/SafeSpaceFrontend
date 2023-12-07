@@ -9,28 +9,28 @@ function Dashboard(props) {
   const navigate = useNavigate();
   const [access_token, setAccess_token] = useState("");
   const [userName, setUserName] = useState("");
-  useEffect(() => {
-    const access_token = localStorage.getItem("access_token");
-    setAccess_token(access_token);
-    const getUser = async () => {
-      try {
-        const response = await axiosInstance.get("auth/users/me", {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${access_token}`,
-          },
-        });
+  // useEffect(() => {
+  //   const access_token = localStorage.getItem("access_token");
+  //   setAccess_token(access_token);
+  //   const getUser = async () => {
+  //     try {
+  //       const response = await axiosInstance.get("auth/users/me", {
+  //         headers: {
+  //           Accept: "application/json",
+  //           Authorization: `Bearer ${access_token}`,
+  //         },
+  //       });
 
-        setUserName(response.data.name);
-      } catch (error) {
-        if (error.response.status === 401 || error.response.status === 406) {
-          navigate("/sign-in");
-        }
-        console.log(error);
-      }
-    };
-    getUser();
-  }, []);
+  //       setUserName(response.data.name);
+  //     } catch (error) {
+  //       if (error.response.status === 401 || error.response.status === 406) {
+  //         navigate("/sign-in");
+  //       }
+  //       console.log(error);
+  //     }
+  //   };
+  //   getUser();
+  // }, []);
 
   return (
     <div className="bg-beige pb-5">

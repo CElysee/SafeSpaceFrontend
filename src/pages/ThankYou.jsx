@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 function ThankYou() {
   return (
     <section
-      className="section bg-beige"
+      className="section bg-beige pt-5"
       id="features"
       style={{ padding: "0px", paddingBottom: "100px" }}
     >
