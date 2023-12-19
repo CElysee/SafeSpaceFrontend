@@ -59,8 +59,9 @@
   color: #c2b1d2;
 }
 .form-control {
-  padding: 1.7rem 0.9rem;
+  padding: 1rem 0.9rem;
   font-family: "Montserrat" !important;
+  height: auto;
 }
 select {
   display: block;
