@@ -26,7 +26,9 @@ function MembershipInfo() {
   const [loading, setLoading] = useState(false);
   const [color, setColor] = useState("#fff");
   const [yogaLocation, setYogaLocation] = useState("");
-  const [showBillingForm, setShowBillingForm] = useState(true);
+  const [showBillingForm, setShowBillingForm] = useState(false);
+  const [slot_available, setSlotAvailable] = useState(false);
+  const [available_time, setAvailableTime] = useState([]);
 
   const [inputValues, setInputValues] = useState({
     email: "",
@@ -61,8 +63,6 @@ function MembershipInfo() {
     };
     fetchMembership();
   }, []);
-  console.log(showBillingForm);
-
   const countryOptions = Array.isArray(country)
     ? country.map((country) => ({
         value: country.id,
@@ -82,6 +82,62 @@ function MembershipInfo() {
       ...inputValues,
       [name]: value,
     });
+    if (name === "booking_date") {
+      setInputValues({
+        ...inputValues,
+        booking_slot_time: "",
+        booking_date: value,
+      });
+      const options = { weekday: "long" }; // This option will return the full name of the day
+      const date = new Date(value);
+      const dayOfWeek = date.toLocaleDateString("en-US", options);
+      setErrorMessages("");
+      switch (dayOfWeek) {
+        case "Monday":
+          setAvailableTime(["6:30 PM"]);
+          break;
+        case "Tuesday":
+          setAvailableTime(["7:00 AM", "12:30 PM"]);
+          break;
+        case "Wednesday":
+          setAvailableTime(["5:30 PM"]);
+          break;
+        case "Thursday":
+          setAvailableTime(["5:30 PM", "7:00 PM"]);
+          break;
+        case "Friday":
+          setAvailableTime(["4:30 PM"]);
+          break;
+        case "Saturday":
+          setAvailableTime(["9:30 - 11 AM"]);
+          break;
+        case "Sunday":
+          setErrorMessages(" - No Yoga class on Sunday");
+          break;
+        default:
+          setAvailableTime("");
+      }
+      setSlotAvailable([]);
+    }
+
+    if (name === "booking_slot_time") {
+      const query = `yoga_session_id=${id}&booking_date=${inputValues.booking_date}&booking_slot_time=${value}&yoga_class_location_id=${inputValues.yoga_class_location_id}`;
+      const fetchSlotNumber = async () => {
+        try {
+          const response = await axiosInstance.get(
+            `/yoga_class_booking/spot_available?${query}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          console.log(response.data);
+          setSlotAvailable(response.data.message);
+        } catch (error) {
+          console.error("Error fetching slot number", error);
+        }
+      };
+      fetchSlotNumber();
+    }
   };
   const isUserRegistered = async () => {
     try {
@@ -117,7 +173,6 @@ function MembershipInfo() {
         booking_slot_time: inputValues.booking_slot_time,
         booking_slot_number: inputValues.booking_slot_number,
       };
-      console.log(params);
       const config = {
         headers: {
           Accept: "application/json",
@@ -136,6 +191,9 @@ function MembershipInfo() {
       console.error("Error making a payment", error);
       setLoading(false);
     }
+  };
+  const showBillingSection = () => {
+    setShowBillingForm(true);
   };
   return (
     <>
@@ -194,7 +252,9 @@ function MembershipInfo() {
                       <option>Select location</option>
                       {yogaLocation &&
                         yogaLocation.map((location) => (
-                          <option key={location.id} value={location.id}>{location.name}</option>
+                          <option key={location.id} value={location.id}>
+                            {location.name}
+                          </option>
                         ))}
                     </select>
                   </div>
@@ -221,8 +281,9 @@ function MembershipInfo() {
                       htmlFor="booking_slot_time"
                       className="form-label paragraph"
                     >
-                      Time
+                      Time {errorMessages}
                     </label>
+
                     <select
                       className="form-control bg-light border-light"
                       name="booking_slot_time"
@@ -230,32 +291,39 @@ function MembershipInfo() {
                       onChange={handleInputChange}
                     >
                       <option>Select time</option>
-                      <option>7:00 AM</option>
-                      <option>9:30 - 11 AM</option>
-                      <option>4:30 PM</option>
-                      <option>5:30 PM</option>
-                      <option>6:30 PM</option>
+                      {available_time &&
+                        available_time.map((time, index) => (
+                          <option key={index} value={time}>
+                            {time}
+                          </option>
+                        ))}
                     </select>
                   </div>
+
                   <div className="mb-4">
-                    <label
-                      htmlFor="booking_slot_number"
-                      className="form-label paragraph"
-                    >
-                      Slot
-                    </label>
-                    <input
-                      type="quantity"
-                      name="booking_slot_number"
-                      className="form-control bg-light border-light"
-                      placeholder="1"
-                      value={inputValues.booking_slot_number}
-                      onChange={handleInputChange}
-                    />
+                    {slot_available > 0 && (
+                      <>
+                        <label
+                          htmlFor="booking_slot_number"
+                          className="form-label paragraph"
+                        >
+                          Spot ({slot_available} spot available)
+                        </label>
+                        <input
+                          type="number"
+                          name="booking_slot_number"
+                          className="form-control bg-light border-light"
+                          placeholder="1"
+                          value={inputValues.booking_slot_number}
+                          onChange={handleInputChange}
+                          max={slot_available}
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
-                <a className="btn book_button" href="#checkout">
-                  Book now
+                <a className="btn book_button" href="#checkout" onClick={showBillingSection}>
+                  {errorMessages ? errorMessages : "Book now"}
                 </a>
               </div>
             </div>
