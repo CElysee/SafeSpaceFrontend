@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Analytics from "./Analytics";
 import Profile from "./Profile";
 import Schedules from "./Schedules";
+import Transaction from "./Transactions";
 import axiosInstance from "../../utils/axiosInstance";
 
 function Dashboard(props) {
@@ -48,11 +49,11 @@ function Dashboard(props) {
                     >
                       <a
                         className="nav-link show active text-bold"
-                        id="custom-v-pills-home-tab"
+                        id="dashboard-tab"
                         data-bs-toggle="pill"
-                        href="#custom-v-pills-home"
+                        href="#dashboard"
                         role="tab"
-                        aria-controls="custom-v-pills-home"
+                        aria-controls="dashboard"
                         aria-selected="true"
                       >
                         <i className="ri-home-4-line d-block fs-20 mb-1"></i>{" "}
@@ -60,11 +61,11 @@ function Dashboard(props) {
                       </a>
                       <a
                         className="nav-link text-bold"
-                        id="custom-v-pills-profile-tab"
+                        id="profile-tab"
                         data-bs-toggle="pill"
-                        href="#custom-v-pills-profile"
+                        href="#profile"
                         role="tab"
-                        aria-controls="custom-v-pills-profile"
+                        aria-controls="profile"
                         aria-selected="false"
                         tabIndex="-1"
                       >
@@ -73,16 +74,29 @@ function Dashboard(props) {
                       </a>
                       <a
                         className="nav-link text-bold"
-                        id="custom-v-pills-messages-tab"
+                        id="schedules-tab"
                         data-bs-toggle="pill"
-                        href="#custom-v-pills-messages"
+                        href="#schedules"
                         role="tab"
-                        aria-controls="custom-v-pills-messages"
+                        aria-controls="schedules"
                         aria-selected="false"
                         tabIndex="-1"
                       >
                         <i className="ri-award-fill d-block fs-20 mb-1"></i>{" "}
                         Schedules
+                      </a>
+                      <a
+                        className="nav-link text-bold"
+                        id="transactions-tab"
+                        data-bs-toggle="pill"
+                        href="#transactions"
+                        role="tab"
+                        aria-controls="transactions"
+                        aria-selected="false"
+                        tabIndex="-1"
+                      >
+                        <i className="ri-money-dollar-circle-line d-block fs-20 mb-1"></i>{" "}
+                        Transactions
                       </a>
                     </div>
                   </div>
@@ -90,29 +104,37 @@ function Dashboard(props) {
                     <div className="tab-content text-muted mt-3 mt-lg-0 paragraph">
                       <div
                         className="tab-pane fade active show"
-                        id="custom-v-pills-home"
+                        id="dashboard"
                         role="tabpanel"
-                        aria-labelledby="custom-v-pills-home-tab"
+                        aria-labelledby="dashboard-tab"
                       >
                         <Analytics user_name={userName} />
                       </div>
 
                       <div
                         className="tab-pane fade"
-                        id="custom-v-pills-profile"
+                        id="profile"
                         role="tabpanel"
-                        aria-labelledby="custom-v-pills-profile-tab"
+                        aria-labelledby="profile-tab"
                       >
                         <Profile />
                       </div>
 
                       <div
                         className="tab-pane fade"
-                        id="custom-v-pills-messages"
+                        id="schedules"
                         role="tabpanel"
-                        aria-labelledby="custom-v-pills-messages-tab"
+                        aria-labelledby="schedules-tab"
                       >
                         <Schedules />
+                      </div>
+                      <div
+                        className="tab-pane fade"
+                        id="transactions"
+                        role="tabpanel"
+                        aria-labelledby="transactions-tap"
+                      >
+                        <Transaction />
                       </div>
                     </div>
                   </div>

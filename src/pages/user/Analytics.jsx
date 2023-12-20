@@ -18,9 +18,8 @@ function Analytics() {
           `/membership_bookings/count/${user_id}`
         );
         const bookings = await axiosInstance.get(
-          `/membership_bookings/user/${user_id}`
+          `/yoga_class_booking/user_bookings?user_id=${user_id}`
         );
-        console.log(bookings.data);
         setBookingsNumbers(response.data.count);
         setBookingsSum(response.data.sum);
         setTransactions(bookings.data);
@@ -48,7 +47,7 @@ function Analytics() {
                 <div className="flex-grow-1 overflow-hidden">
                   <p className="text-uppercase fw-medium text-muted text-truncate mb-0 text-bold">
                     {" "}
-                    Bookings
+                    Pending Bookings
                   </p>
                 </div>
               </div>
@@ -114,7 +113,7 @@ function Analytics() {
                       <tr>
                         <th scope="col">Order ID</th>
                         <th scope="col">Customer Names</th>
-                        <th scope="col">Membership</th>
+                        <th scope="col">Yoga Class</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Payment Status</th>
                         <th scope="col">Booking status</th>
@@ -122,7 +121,7 @@ function Analytics() {
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.map((transaction, index) => (
+                      {transactions.length > 1 && transactions.map((transaction, index) => (
                         <tr key={index}>
                           <td>{transaction.id}</td>
                           <td>
@@ -150,7 +149,7 @@ function Analytics() {
                           </td>
                           <td>
                             <span className="badge bg-beige text-dark">
-                            {transaction.booking.starting_date}
+                            {transaction.booking.booking_date}
                             </span>
                           </td>
                         </tr>

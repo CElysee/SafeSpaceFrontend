@@ -1,6 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../utils/axiosInstance";
 
 function Profile() {
+  const [userData, setUserData] = useState("");
+  const [countryList, setCountryList] = useState([]);
+  const [userValues, setUserValues] = useState({
+    name: "",
+    email: "",
+    phone_number: "",
+    gender: "",
+    country_id: "",
+  });
+  useEffect(() => {
+    const user_id = localStorage.getItem("user_id");
+    const fetchUser = async () => {
+      try {
+        const response = await axiosInstance.get(`/auth/users/${user_id}`);
+        const country_list = await axiosInstance.get("/country/list");
+        setUserData(response.data);
+        setCountryList(country_list.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUser();
+  }, []);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserValues({ ...userValues, [name]: value });
+  };
   return (
     <div className="container">
       <div className="row mx-auto">
@@ -43,68 +71,70 @@ function Profile() {
                   id="personalDetails"
                   role="tabpanel"
                 >
-                  <form action="">
+                  <form>
                     <div className="row">
                       <div className="col-lg-6">
                         <div className="mb-3">
-                          <label
-                            htmlFor="firstnameInput"
-                            className="form-label"
-                          >
-                            First Name
+                          <label htmlFor="name" className="form-label">
+                            Names
                           </label>
                           <input
                             type="text"
                             className="form-control"
-                            id="firstnameInput"
-                            placeholder="Enter your firstname"
-                            value="Dave"
+                            id="name"
+                            name="name"
+                            value={userData.name}
+                            onChange={handleChange}
                           />
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="mb-3">
-                          <label htmlFor="lastnameInput" className="form-label">
-                            Last Name
+                          <label htmlFor="email" className="form-label">
+                            Email Address
                           </label>
                           <input
-                            type="text"
+                            type="email"
+                            name="email"
                             className="form-control"
-                            id="lastnameInput"
-                            placeholder="Enter your lastname"
-                            value="Adame"
+                            id="email"
+                            value={userData.email}
+                            onChange={handleChange}
                           />
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="mb-3">
-                          <label
-                            htmlFor="phonenumberInput"
-                            className="form-label"
-                          >
+                          <label htmlFor="phone_number" className="form-label">
                             Phone Number
                           </label>
                           <input
                             type="text"
                             className="form-control"
-                            id="phonenumberInput"
-                            placeholder="Enter your phone number"
-                            value="+(1) 987 6543"
+                            name="phone_number"
+                            id="phone_number"
+                            value={userData.phone_number}
+                            onChange={handleChange}
                           />
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="mb-3">
-                          <label htmlFor="emailInput" className="form-label">
-                            Email Address
+                          <label
+                            htmlFor="gender"
+                            className="form-label paragraph"
+                          >
+                            Gender
                           </label>
-                          <input
-                            type="email"
-                            className="form-control"
-                            id="emailInput"
-                            placeholder="Enter your email"
-                            value="daveadame@velzon.com"
-                          />
+                          <select
+                            className=""
+                            name="gender"
+                            onChange={handleChange}
+                          >
+                            <option selected>{userData.gender}</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                          </select>
                         </div>
                       </div>
                       <div className="col-lg-6">
@@ -113,19 +143,34 @@ function Profile() {
                             htmlFor="username"
                             className="form-label paragraph"
                           >
-                            Gender
+                            Country
                           </label>
-                          <select className="">
-                            <option selected>Select gender</option>
-                            <option>Male</option>
-                            <option>Female</option>
+                          <select
+                            className=""
+                            name="country_id"
+                            onChange={handleChange}
+                          >
+                            {userData && (
+                              <option value={userData.country.id} selected>
+                                {userData.country.name}
+                              </option>
+                            )}
+                            {countryList.length > 1 &&
+                              countryList.map((country, index) => (
+                                <option key={index} value={country.name}>
+                                  {country.name}
+                                </option>
+                              ))}
                           </select>
                         </div>
                       </div>
 
                       <div className="col-lg-12">
                         <div className="text-end">
-                          <button type="submit" className="btn btn-success text-dark">
+                          <button
+                            type="submit"
+                            className="btn btn-success text-dark"
+                          >
                             Update profile
                           </button>
                         </div>
@@ -192,7 +237,10 @@ function Profile() {
 
                       <div className="col-lg-12">
                         <div className="text-end">
-                          <button type="submit" className="btn btn-success text-dark">
+                          <button
+                            type="submit"
+                            className="btn btn-success text-dark"
+                          >
                             Change Password
                           </button>
                         </div>

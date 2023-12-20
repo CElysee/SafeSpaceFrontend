@@ -12,7 +12,7 @@ function Schedules() {
     const fetchBookings = async () => {
       try {
         const bookings = await axiosInstance.get(
-          `/yoga_class_booking/user_bookings?user_id=${user_id}`
+          `/yoga_class_booking/transaction?user_id=${user_id}`
         );
         setTransactions(bookings.data);
       } catch (error) {
@@ -37,46 +37,34 @@ function Schedules() {
                     <thead className="text-muted table-light">
                       <tr>
                         <th scope="col">Order ID</th>
-                        <th scope="col">Customer Names</th>
+                        <th scope="col">Billing Names</th>
+                        <th scope="col">Billing Email</th>
+                        <th scope="col">Billing Address</th>
+                        <th scope="col">Billing City</th>
+                        <th scope="col">Billing Country</th>
                         <th scope="col">Yoga Class</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Payment Status</th>
-                        <th scope="col">Booking status</th>
-                        <th scope="col">Starting Date</th>
                       </tr>
                     </thead>
                     <tbody>
                       {transactions.length > 1 && transactions.map((transaction, index) => (
                         <tr key={index}>
-                          <td>{transaction.id}</td>
+                          <td>{transaction.booking.id}</td>
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="flex-grow-1">
-                                {transaction.user.name}
+                                {transaction.booking.billing_names}
                               </div>
                             </div>
                           </td>
-                          <td>{transaction.yoga_session.name}</td>
-                          <td>
-                            <span className="text-dark">
-                              {transaction.yoga_session.price} Rwf
-                            </span>
-                          </td>
-                          <td>
-                            <span className="badge bg-beige text-dark">
-                              {transaction.booking.payment_status}
-                            </span>
-                          </td>
-                          <td>
-                            <span className="badge bg-beige text-dark">
-                              {transaction.booking.booking_status}
-                            </span>
-                          </td>
-                          <td>
-                            <span className="badge bg-beige text-dark">
-                            {transaction.booking.booking_date}
-                            </span>
-                          </td>
+                          <td>{transaction.booking.billing_email}</td>
+                          <td>{transaction.booking.billing_address}</td>
+                          <td>{transaction.booking.billing_city}</td>
+                          <td>{transaction.country}</td>
+                          <td>{transaction.yoga_session}</td>
+                          <td></td>
+                          <td></td>
                         </tr>
                       ))}
                     </tbody>
