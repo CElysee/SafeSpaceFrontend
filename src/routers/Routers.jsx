@@ -5,6 +5,7 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import Dashboard from "../pages/user/Dashboard";
 import ThankYou from "../pages/ThankYou";
+import Planning from "../components/planning/Planning";
 
 function Routers() {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ function Routers() {
   return (
     <Routes>
       <Route path="/book-membership/:id" element={<Home />} />
+      <Route path="/planning" element={<Planning />} />
       <Route path="/sign-in" element={<Login />} />
       <Route path="/sign-up" element={<Register />} />
       <Route path="/thank-you" element={<ThankYou />} />

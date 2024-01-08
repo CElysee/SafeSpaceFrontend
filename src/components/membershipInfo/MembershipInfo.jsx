@@ -132,6 +132,9 @@ function MembershipInfo() {
           );
           console.log(response.data);
           setSlotAvailable(response.data.message);
+          if (response.data.message == "Spot not available") {
+            setErrorMessages("Spot not available");
+          }
         } catch (error) {
           console.error("Error fetching slot number", error);
         }
@@ -223,17 +226,24 @@ function MembershipInfo() {
                   {membershipData.price} Rwf – {membershipData.session_time}
                 </h4>
                 <p className="mb-4 ff-secondary fs-16 paragraph">
-                  Safe Space yoga studio is an intimate space that creates a
-                  comfortable and supportive environment for yoga practice.
+                  <strong>Arrival time:</strong>The studio opens 20 minutes
+                  before the class starts. We recommend arriving at least 10
+                  minutes before the class begins to ensure a relaxed and
+                  unhurried experience.
                 </p>
                 <p className="mb-4 ff-secondary fs-16 paragraph">
-                  It isn’t just a place for yoga, it’s a sanctuary where you can
-                  find solace, support, and personal growth.
+                  <strong>Electronic device: </strong>In the spirit of creating
+                  a peaceful and distraction-free environment, we kindly request
+                  that you either turn off or switch your phone to airplane mode
+                  upon entering the studio space.
                 </p>
                 <p className="mb-4 ff-secondary fs-16 paragraph">
-                  At Safe Space Studio, we honor yoga roots and aspire to
-                  cultivate an environment that nurtures all dimensions of
-                  being: body, soul, and mind.
+                  <strong>Quiet reflection: </strong>Upon entering the studio,
+                  please find a comfortable spot and sit quietly. Use this time
+                  to center yourself, focus on your breath, and respect the
+                  peace and serenity of your fellow participants. This brief
+                  moment of stillness helps set a positive and harmonious tone
+                  for the class.
                 </p>
                 <div className="booking-section">
                   <div className="mb-4">
@@ -322,8 +332,12 @@ function MembershipInfo() {
                     )}
                   </div>
                 </div>
-                <a className="btn book_button" href="#checkout" onClick={showBillingSection}>
-                  {errorMessages ? errorMessages : "Book now"}
+                <a
+                  className="btn book_button"
+                  href="#checkout"
+                  onClick={showBillingSection}
+                >
+                  {errorMessages == "Spot not available" ? "Spot not available, Click here to share your phone number to be notified when the spot is available" : "Book now"}
                 </a>
               </div>
             </div>

@@ -125,10 +125,18 @@ function Header(props) {
               </li>
               <li className="nav-item">
                 <Link
+                  to={"/planning"}
+                  className="nav-link fs-15"
+                >
+                  Planning
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link
                   to={"https://webtesting.co.rw/safespace/schedules/"}
                   className="nav-link fs-15"
                 >
-                  Membership
+                  Packages
                 </Link>
               </li>
               <li className="nav-item">

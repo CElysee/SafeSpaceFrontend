@@ -1,0 +1,50 @@
+.tab {
+  --tab-edge-distance: 45px;
+  position: relative;
+  background-color: #f3eae4;
+  aspect-ratio: 1/1;
+  border-radius: 2rem;
+  display: grid;
+  place-items: center;
+  width: fit-content;
+  border: none;
+}
+
+.hole {
+  /* this takes the hole outside the normal flow so we can use top, bottom, left, right, inset etc. to position it */
+  position: absolute;
+
+  background-color: white;
+  width: 20px;
+  height: 20px;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+
+  /* place the hole 0 px from the top of the container. */
+  top: 0;
+}
+
+.left {
+  /* place the hole --tab-edge-distance px from the left of the container. */
+  /* note we only have to definee this once so makes life easier */
+  left: var(--tab-edge-distance);
+}
+
+.right {
+  /* as above but right hand */
+  right: var(--tab-edge-distance);
+}
+
+.number {
+    font-size: 12px;
+    font-family: "Montserrat", sans-serif;
+    color: #2a394e;
+    padding: 10px;
+    font-weight: 600;
+}
+.date_list{
+    display: flex;
+    justify-content: space-between;
+    gap: 15px; 
+    text-align: center;
+}
