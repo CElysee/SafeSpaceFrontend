@@ -1,7 +1,7 @@
 .tab {
   --tab-edge-distance: 45px;
   position: relative;
-  background-color: #f3eae4;
+  background-color: #c2b1d2;
   aspect-ratio: 1/1;
   border-radius: 2rem;
   display: grid;
@@ -9,7 +9,21 @@
   width: fit-content;
   border: none;
 }
-
+tab_not_active {
+  color: var(--vz-btn-hover-color);
+  background-color: #c2b1d2;
+  border-color: #c2b1d2;
+}
+.btn_active{
+  color: var(--vz-btn-hover-color);
+  background-color: #f3eae4;
+  border-color: #f3eae4;
+}
+.tab:hover {
+  color: var(--vz-btn-hover-color);
+  background-color: #f3eae4;
+  border-color: #f3eae4;
+}
 .hole {
   /* this takes the hole outside the normal flow so we can use top, bottom, left, right, inset etc. to position it */
   position: absolute;
@@ -36,15 +50,55 @@
 }
 
 .number {
-    font-size: 12px;
-    font-family: "Montserrat", sans-serif;
-    color: #2a394e;
-    padding: 10px;
-    font-weight: 600;
+  font-size: 12px;
+  font-family: "Montserrat", sans-serif;
+  color: #2a394e;
+  padding: 10px;
+  font-weight: 600;
 }
-.date_list{
-    display: flex;
-    justify-content: space-between;
-    gap: 15px; 
-    text-align: center;
+.date_list {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  text-align: center;
+}
+.session_list {
+  display: flex;
+  gap: 15px;
+  justify-content: space-between;
+}
+.session {
+  background-color: #f3eae4;
+  border-radius: 1rem;
+}
+.session_time {
+  padding-top: 3px;
+  padding-left: 10px;
+}
+.session .name {
+  display: flex;
+}
+.session .name h4 {
+  padding-top: 3px;
+  padding-left: 10px;
+}
+.session_date {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.location_name{
+  position: relative;
+  bottom: 8px;
+  padding-left: 10px;
+}
+.session_date .date {
+  padding-left: 10px;
+  position: relative;
+  bottom: 8px;
+  font-size: 14px;
+}
+.session .time {
+  display: flex;
+  font-size: 14px;
 }

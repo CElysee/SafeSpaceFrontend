@@ -4,7 +4,25 @@
 * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)*/
 
 @import url('https://fonts.cdnfonts.com/css/montserrat');
-@import url('https://fonts.cdnfonts.com/css/prata-2');          
+@import url('https://fonts.cdnfonts.com/css/prata-2');    
+/* @font-face {
+  font-family: 'Recoleta';
+  src: local('Recoleta Medium'), local('Recoleta-Medium'),
+      url('/public/assets/fonts/Recoleta-Medium.woff2') format('woff2'),
+      url('/public/assets/fonts/Recoleta-Medium.woff2') format('woff'),
+      url('/public/assets/fonts/Recoleta-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}    */
+@font-face {
+  font-family: 'Recoleta-Medium';
+  src: url('../fonts/Recoleta-Medium.woff2') format('woff2'),
+       url('../fonts/Recoleta-Medium.woff') format('woff'),
+       url('../fonts/Recoleta-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}   
 /* @font-face {
   font-family: Circular;
   src: url('/media/CircularStd-Book.otf');

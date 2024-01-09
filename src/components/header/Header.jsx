@@ -139,9 +139,9 @@ function Header(props) {
                   Packages
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link className="nav-link fs-15">Blog</Link>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <Link
                   to="https://webtesting.co.rw/safespace/contact/"

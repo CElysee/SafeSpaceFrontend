@@ -1,6 +1,9 @@
 .navbar-landing {
   background: #f3eae4 !important;
 }
+.navbar-landing .navbar-nav .nav-item .nav-link {
+  font-size: 14px !important;
+}
 .nav-item:hover {
   color: #d45700 !important;
 }
