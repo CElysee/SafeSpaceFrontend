@@ -159,7 +159,6 @@ tab_not_active {
   will-change: transform, border-width, border-color;
   -webkit-animation: bubble 1s ease-in;
   animation: bubble 1s ease-in;
-  
 }
 [type="radio"]:checked ~ label:after {
   will-change: opacity, box-shadow;
@@ -481,26 +480,35 @@ label:after {
       -1.61955rem -0.87617rem 0 0rem #ff8080;
   }
 }
-.card_info_name{
+.card_info_name {
   font-size: 10px;
   font-weight: bold;
 }
-.card_info_price{
+.card_info_price {
   font-size: 10px;
   font-weight: bold;
 }
-.card_info_validity{
+.card_info_validity {
   font-size: 10px;
   font-weight: bold;
 }
-.form_paragraph{
-  font-family: 'Montserrat', sans-serif !important;
-    color: #020101 !important;
-    font-size: 13px;
+.form_paragraph {
+  font-family: "Montserrat", sans-serif !important;
+  color: #020101 !important;
+  font-size: 13px;
 }
 .make_payment .form-control {
   padding: 1rem 0.9rem;
   font-family: "Montserrat" !important;
   height: auto;
   font-size: 13px;
+}
+.date_range {
+  margin-bottom: 5px;
+}
+.book_now_btn {
+  background-color: #c2b1d2 !important;
+  border-color: #c2b1d2 !important;
+  color: #fff !important;
+  font-weight: bold;
 }

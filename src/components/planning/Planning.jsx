@@ -8,6 +8,7 @@ import RiseLoader from "react-spinners/RiseLoader";
 import "react-toastify/dist/ReactToastify.css";
 import "../membershipInfo/MembershipInfo.css";
 import { ToastContainer, toast } from "react-toastify";
+import { set } from "date-fns";
 
 const override = {
   display: "block",
@@ -28,6 +29,7 @@ function Planning() {
   const [dayActive, setDayActive] = useState(null);
   const [session_id, setSession_id] = useState(0);
   const [yogaPackage, setYogaPackage] = useState([]);
+  const [yogaPackageFilter, setYogaPackageFilter] = useState([]);
   const [yogaPackageId, setYogaPackageId] = useState();
   const [loading, setLoading] = useState(false);
   const [isNotRegisted, setIsNotRegistred] = useState(false);
@@ -36,6 +38,8 @@ function Planning() {
   const [slot_available, setSlotAvailable] = useState(false);
   const [available_time, setAvailableTime] = useState([]);
   const [showBookButton, setShowBookButton] = useState(true);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [inputValues, setInputValues] = useState({
     email: "",
     names: "",
@@ -51,6 +55,28 @@ function Planning() {
   });
 
   useEffect(() => {
+    const today = new Date();
+    const currentDay = today.getDay();
+    const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1); // Adjust for Sunday
+
+    // Calculate last week's Sunday date
+    const lastWeekSunday = new Date(today);
+    lastWeekSunday.setDate(today.getDate() - currentDay - 7);
+    setStartDate(lastWeekSunday.toISOString().split("T")[0]); // Format as YYYY-MM-DD
+    const startOfWeek = new Date(today.setDate(diff));
+    const endOfWeek = new Date(today.setDate(diff + 6));
+    const formattedStartDate = startOfWeek.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "numeric",
+      day: "numeric",
+    });
+    const formattedEndDate = endOfWeek.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "numeric",
+      day: "numeric",
+    });
+    setStartDate(formattedStartDate);
+    setEndDate(formattedEndDate);
     const fetchMembership = async () => {
       const country_response = await axiosInstance.get("/country/list", {});
       const yoga_location = await axiosInstance.get(
@@ -70,7 +96,8 @@ function Planning() {
           setDays_list(response.data);
           setSelectedDay(response.data[0].sessions);
           setDayActive(0);
-          setYogaPackage(yogaSessions.data);
+          setYogaPackage(yogaSessions.data);   
+          setYogaPackageFilter(yogaSessions.data);
         } else {
           console.log("Empty response or missing data");
         }
@@ -91,7 +118,6 @@ function Planning() {
     };
     fetchDays();
     fetchMembership();
-    
   }, []);
 
   const handleShowPassword = () => {
@@ -120,29 +146,22 @@ function Planning() {
   const handleDayActive = (index) => {
     setDayActive(index);
     setSelectedDay(days_list[index].sessions);
-
-  //   const query = `yoga_session_id=${id}&booking_date=${inputValues.booking_date}&booking_slot_time=${selectedDay[session_id].time}&yoga_class_location_id=${inputValues.yoga_class_location_id}`;
-  //   const fetchSlotNumber = async () => {
-  //     try {
-  //       const response = await axiosInstance.get(
-  //         `/yoga_class_booking/spot_available?${query}`,
-  //         {
-  //           headers: { "Content-Type": "application/json" },
-  //         }
-  //       );
-  //       console.log(response.data);
-  //       setSlotAvailable(response.data.message);
-  //       if (response.data.message == "Spot not available") {
-  //         setErrorMessages("Spot not available");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching slot number", error);
-  //     }
-  //   };
-  //   fetchSlotNumber();
- };
+    setSession_id(0)
+  };
   const handleSession_id = (id) => {
     setSession_id(id);
+    console.log(selectedDay[id])
+    if (selectedDay[id].name !== "Sadhana - Kigali Wellness Hub") {
+      const filteredArray = yogaPackageFilter.filter((item) => {
+        return item.name !== "SADHANA 4 CLASSES PASS";
+      });
+      setYogaPackage(filteredArray);
+    }else{
+      const filteredArray = yogaPackageFilter.filter((item) => {
+        return !["5 CLASSES PASS", "10 CLASSES PASS", "NEW STUDENT- 2 WEEKS PASS"].includes(item.name);
+      });
+      setYogaPackage(filteredArray);
+    }
   };
   const isUserRegistered = async () => {
     try {
@@ -202,6 +221,54 @@ function Planning() {
     setShowBillingForm(true);
     setShowBookButton(false);
   };
+  const handleLeftArrowDate = () => {
+    const currentYear = new Date().getFullYear();
+    const inputDateWithYear = `${startDate} ${currentYear}`;
+
+    // Parse the input date string
+    const parsedDate = new Date(inputDateWithYear);
+
+    // Define options for formatting the date
+    const options = {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      timeZoneName: "short",
+      timeZone: "Africa/Cairo", // Adjust the timeZone as per your requirements
+    };
+
+    // Convert the date to the desired format
+    const formattedDate = parsedDate
+      .toLocaleString("en-US", options)
+      .replace(/,/g, "");
+
+    const today = new Date();
+    const currentDay = today.getDay();
+    // Calculate last week's Sunday date
+    const lastWeekSunday = new Date(formattedDate);
+    lastWeekSunday.setDate(today.getDate() - currentDay - 7);
+    console.log(lastWeekSunday);
+    setStartDate(lastWeekSunday.toISOString().split("T")[0]); // Format as YYYY-MM-DD
+    const formattedStartDate = lastWeekSunday.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "numeric",
+      day: "numeric",
+    });
+    // Calculate last date of last week
+    const lastDateOfLastWeek = new Date(today);
+    lastDateOfLastWeek.setDate(today.getDate() - currentDay - 1); // Subtract days to get to the last day of last week
+    const formattedEndDate = lastDateOfLastWeek.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "numeric",
+      day: "numeric",
+    });
+    setStartDate(formattedStartDate);
+    setEndDate(formattedEndDate);
+  };
   return (
     <>
       <section
@@ -211,7 +278,7 @@ function Planning() {
       >
         <div className="container">
           <div className="row align-items-center gy-4">
-            <div className="col-lg-6">
+            {/* <div className="col-lg-6">
               <div>
                 <img
                   src="/assets/images/SSY-28-scaled.jpg"
@@ -219,12 +286,12 @@ function Planning() {
                   className="img-fluid mx-auto"
                 />
               </div>
-            </div>
-            <div className="col-lg-6 pl-5">
+            </div> */}
+            <div className="col-lg-12 pl-5">
               <div className="text-muted">
-                <h2 className="mb-3 fs-20 text-center title_text">
+                {/* <h2 className="mb-3 fs-20 text-center title_text">
                   Course schedule
-                </h2>
+                </h2> */}
                 <p className="mb-4 ff-secondary fs-16 paragraph">
                   <strong>Arrival time:</strong>The studio opens 20 minutes
                   before the class starts. We recommend arriving at least 10
@@ -260,9 +327,51 @@ function Planning() {
             <div className="col-lg-12">
               <button
                 className="btn btn-primary pt-2"
-                style={{ margin: "auto", display: "block" }}
+                style={{
+                  margin: "auto",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                Sun 01/07 - Sat 01/13
+                <div className="left_arrow">
+                  <svg
+                    width="30px"
+                    height="30px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    onClick={handleLeftArrowDate}
+                  >
+                    <rect width="24" height="24" fill="white" />
+                    <path
+                      d="M14.5 17L9.5 12L14.5 7"
+                      stroke="#000000"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div className="date_range">
+                  {startDate} - {endDate}{" "}
+                </div>
+                <div className="right_arrow">
+                  <svg
+                    width="30px"
+                    height="30px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect width="24" height="24" fill="white" />
+                    <path
+                      d="M9.5 7L14.5 12L9.5 17"
+                      stroke="#000000"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
               </button>
               <div className="date_list pt-5">
                 {days_list &&
@@ -283,7 +392,7 @@ function Planning() {
                 {selectedDay.map((session_list, index) => (
                   <div className="session mt-5 p-3 col-lg-6" key={index}>
                     <div className="name">
-                      {" "}
+                      {""}
                       <svg
                         width="25px"
                         height="25px"
@@ -437,7 +546,6 @@ function Planning() {
                 ))}
               </div>
             </div>
-
             <div
               className="modal fade"
               id="exampleModal"
@@ -445,7 +553,7 @@ function Planning() {
               aria-labelledby="exampleModalLabel"
               aria-hidden="true"
             >
-              <div className="modal-dialog">
+              <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5
@@ -643,7 +751,6 @@ function Planning() {
                                     Validity: {yoga.session_time}
                                   </div>
                                 </div>
-
                                 <div className="card card--white card--sm">
                                   <div className="card__chip"></div>
                                   <div className="card__content">
@@ -682,7 +789,7 @@ function Planning() {
                                 <div className="col-lg-12">
                                   <div className="row gy-4">
                                     <div className="col-lg-12">
-                                      <h4 className="fw-semibold">Sign In</h4>
+                                      <h4 className="fw-semibold">Contact</h4>
                                     </div>
                                     <div className="col-lg-6">
                                       <div className="mb-3">
@@ -943,7 +1050,7 @@ function Planning() {
                     {showBookButton && (
                       <button
                         type="button"
-                        className="btn btn-primary"
+                        className="btn btn-primary book_now_btn"
                         onClick={showBillingSection}
                         disabled={yogaPackageId > 0 ? false : true}
                       >
