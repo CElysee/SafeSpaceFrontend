@@ -512,3 +512,35 @@ label:after {
   color: #fff !important;
   font-weight: bold;
 }
+.add_session_btn{
+  width: 100%;
+  display: inline-block;
+    /* justify-content: space-between; */
+    /* align-items: center; */
+    /* gap: 5px; */
+    background-color: #c2b1d2 !important;
+    border-color: #c2b1d2 !important;
+    color: #fff !important;
+    font-weight: bold;
+}
+.add_session_btn svg{
+  position: relative;
+  top: 5px;
+  right: 5px;
+}
+.session_option{
+  width: 100%;
+  background-color: #fff; /* Set your desired background color */
+  border-radius: 8px; /* Optional: Adds rounded corners */
+  box-shadow: 0 0 10px 5px rgb(255 240 240);
+  padding-top: 5px;
+  padding-bottom: 2px;
+  position: relative;
+  margin: 0px;
+}
+.session_option{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  cursor: pointer;
+}

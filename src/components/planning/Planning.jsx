@@ -29,6 +29,7 @@ function Planning() {
   const [dayActive, setDayActive] = useState(null);
   const [session_id, setSession_id] = useState(0);
   const [yogaPackage, setYogaPackage] = useState([]);
+  const [ahead_session, setAheadSession] = useState([]);
   const [yogaPackageFilter, setYogaPackageFilter] = useState([]);
   const [yogaPackageId, setYogaPackageId] = useState();
   const [loading, setLoading] = useState(false);
@@ -38,6 +39,7 @@ function Planning() {
   const [slot_available, setSlotAvailable] = useState(false);
   const [available_time, setAvailableTime] = useState([]);
   const [showBookButton, setShowBookButton] = useState(true);
+  const [moreSessions, setMoreSessions] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [inputValues, setInputValues] = useState({
@@ -83,8 +85,14 @@ function Planning() {
         "/yoga_class_location/list",
         {}
       );
+      const ahead_session = await axiosInstance.get(
+        "/planningsession_weekly_list",
+        {}
+      );
       setCountry(country_response.data);
       setYogaLocation(yoga_location.data);
+      setAheadSession(ahead_session.data);
+      setMoreSessions([]);
     };
 
     const fetchDays = async () => {
@@ -96,7 +104,7 @@ function Planning() {
           setDays_list(response.data);
           setSelectedDay(response.data[0].sessions);
           setDayActive(0);
-          setYogaPackage(yogaSessions.data);   
+          setYogaPackage(yogaSessions.data);
           setYogaPackageFilter(yogaSessions.data);
         } else {
           console.log("Empty response or missing data");
@@ -146,19 +154,22 @@ function Planning() {
   const handleDayActive = (index) => {
     setDayActive(index);
     setSelectedDay(days_list[index].sessions);
-    setSession_id(0)
+    setSession_id(0);
   };
   const handleSession_id = (id) => {
     setSession_id(id);
-    console.log(selectedDay[id])
     if (selectedDay[id].name !== "Sadhana - Kigali Wellness Hub") {
       const filteredArray = yogaPackageFilter.filter((item) => {
         return item.name !== "SADHANA 4 CLASSES PASS";
       });
       setYogaPackage(filteredArray);
-    }else{
+    } else {
       const filteredArray = yogaPackageFilter.filter((item) => {
-        return !["5 CLASSES PASS", "10 CLASSES PASS", "NEW STUDENT- 2 WEEKS PASS"].includes(item.name);
+        return ![
+          "5 CLASSES PASS",
+          "10 CLASSES PASS",
+          "NEW STUDENT- 2 WEEKS PASS",
+        ].includes(item.name);
       });
       setYogaPackage(filteredArray);
     }
@@ -268,6 +279,20 @@ function Planning() {
     });
     setStartDate(formattedStartDate);
     setEndDate(formattedEndDate);
+  };
+  const handleBookMoreSessions = (index) => {
+    // Remove the selected date from the source array
+    const movedDate = ahead_session[index];
+    const updatedSourceDates = ahead_session.filter((date, i) => i !== index);
+    setAheadSession(updatedSourceDates);
+    setMoreSessions([...moreSessions, movedDate]);
+  };
+  const removeBookMoreSessions = (index) => {
+    // Remove the selected date from the source array
+    const movedDate = moreSessions[index];
+    const updatedSourceDates = moreSessions.filter((date, i) => i !== index);
+    setMoreSessions(updatedSourceDates);
+    setAheadSession([...ahead_session, movedDate]);
   };
   return (
     <>
@@ -721,6 +746,191 @@ function Planning() {
                                 {selectedDay.length > 0 &&
                                   days_list[dayActive].days}
                               </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="add_session pt-2">
+                          <button
+                            className="btn btn-primary add_session_btn"
+                            type="button"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasRight"
+                            aria-controls="offcanvasRight"
+                          >
+                            {" "}
+                            <svg
+                              width="20px"
+                              height="20px"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M4 12H20M12 4V20"
+                                stroke="#000000"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            Add sessions
+                          </button>
+                          <div className="add_session_list pt-3">
+                            {moreSessions.length > 0 &&
+                              moreSessions.map((session, index) => (
+                                <div
+                                  className="session_option p-3"
+                                  key={index}
+                                  
+                                >
+                                  <div className="card_info">
+                                    <div className="card_info_name">
+                                      {selectedDay.length > 0 &&
+                                        selectedDay[session_id].name}
+                                    </div>
+                                    <div className="card_info_price">
+                                      {selectedDay.length > 0 &&
+                                        selectedDay[session_id].time}
+                                    </div>
+                                    <div className="card_info_validity">
+                                      {session}
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="card_close_button"
+                                    style={{ cursor: "pointer" }}
+                                  >
+                                    <svg
+                                      width="25px"
+                                      height="25px"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      onClick={() => removeBookMoreSessions(index)}
+                                    >
+                                      <g
+                                        id="SVGRepo_bgCarrier"
+                                        strokeWidth="0"
+                                      />
+
+                                      <g
+                                        id="SVGRepo_tracerCarrier"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                      />
+
+                                      <g id="SVGRepo_iconCarrier">
+                                        {" "}
+                                        <path
+                                          d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
+                                          stroke="#000000"
+                                          strokeWidth="1.5"
+                                          strokeLinecap="round"
+                                        />{" "}
+                                        <path
+                                          d="M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7"
+                                          stroke="#000000"
+                                          strokeWidth="1.5"
+                                          strokeLinecap="round"
+                                        />{" "}
+                                      </g>
+                                    </svg>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                          <div
+                            className="offcanvas offcanvas-end"
+                            tabIndex="-1"
+                            id="offcanvasRight"
+                            aria-labelledby="offcanvasRightLabel"
+                          >
+                            <div className="offcanvas-header">
+                              <h5 id="offcanvasRightLabel">
+                                Book more sessions
+                              </h5>
+                              <button
+                                type="button"
+                                className="btn-close text-reset"
+                                data-bs-dismiss="offcanvas"
+                                aria-label="Close"
+                              ></button>
+                            </div>
+                            <div className="offcanvas-body">
+                              <div className="add_session_list pt-3">
+                                {ahead_session.length > 0 ? (
+                                  ahead_session.map((session, index) => (
+                                    <div
+                                      className="session_option p-3"
+                                      key={index}
+                                      onClick={() =>
+                                        handleBookMoreSessions(index)
+                                      }
+                                    >
+                                      <div className="card_info">
+                                        <div className="card_info_name">
+                                          {selectedDay.length > 0 &&
+                                            selectedDay[session_id].name}
+                                        </div>
+                                        <div className="card_info_price">
+                                          {selectedDay.length > 0 &&
+                                            selectedDay[session_id].time}
+                                        </div>
+                                        <div className="card_info_validity">
+                                          {session}
+                                        </div>
+                                      </div>
+                                      <div
+                                        className="card_close_button"
+                                        style={{ cursor: "pointer" }}
+                                      >
+                                        <svg
+                                          width="25px"
+                                          height="25px"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V10M20 10H4M8 3V7M16 3V7"
+                                            stroke="#000000"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                          />
+                                          <rect
+                                            x="6"
+                                            y="12"
+                                            width="3"
+                                            height="3"
+                                            rx="0.5"
+                                            fill="#000000"
+                                          />
+                                          <rect
+                                            x="10.5"
+                                            y="12"
+                                            width="3"
+                                            height="3"
+                                            rx="0.5"
+                                            fill="#000000"
+                                          />
+                                          <rect
+                                            x="15"
+                                            y="12"
+                                            width="3"
+                                            height="3"
+                                            rx="0.5"
+                                            fill="#000000"
+                                          />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p className="form_paragraph">
+                                    No available session for the up coming month
+                                  </p>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
