@@ -40,8 +40,10 @@ function Planning() {
   const [available_time, setAvailableTime] = useState([]);
   const [showBookButton, setShowBookButton] = useState(true);
   const [moreSessions, setMoreSessions] = useState([]);
+  const [resetMoreSessions, setResetMoreSessions] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [disableBookMore, setDisableBookMore] = useState(false);
   const [inputValues, setInputValues] = useState({
     email: "",
     names: "",
@@ -92,7 +94,9 @@ function Planning() {
       setCountry(country_response.data);
       setYogaLocation(yoga_location.data);
       setAheadSession(ahead_session.data);
+      setResetMoreSessions(ahead_session.data);
       setMoreSessions([]);
+      setErrorMessages("")
     };
 
     const fetchDays = async () => {
@@ -155,6 +159,10 @@ function Planning() {
     setDayActive(index);
     setSelectedDay(days_list[index].sessions);
     setSession_id(0);
+    setMoreSessions([]);
+    setAheadSession(resetMoreSessions);
+    setDisableBookMore(false);
+    setErrorMessages("")
   };
   const handleSession_id = (id) => {
     setSession_id(id);
@@ -256,7 +264,6 @@ function Planning() {
     const formattedDate = parsedDate
       .toLocaleString("en-US", options)
       .replace(/,/g, "");
-
     const today = new Date();
     const currentDay = today.getDay();
     // Calculate last week's Sunday date
@@ -286,6 +293,34 @@ function Planning() {
     const updatedSourceDates = ahead_session.filter((date, i) => i !== index);
     setAheadSession(updatedSourceDates);
     setMoreSessions([...moreSessions, movedDate]);
+    if (
+      selectedDay[session_id].name == "Sadhana - Kigali Wellness Hub" &&
+      moreSessions.length >= 2
+    ) {
+      setErrorMessages("You can't book more than 4 sessions")
+      setDisableBookMore(true);
+      const filteredArray = yogaPackageFilter.filter((item) => {
+        return item.name === "SADHANA 4 CLASSES PASS";
+      });
+      setYogaPackage(filteredArray);
+    }
+    if (
+      moreSessions.length >= 4 &&
+      selectedDay[session_id].name !== "Sadhana - Kigali Wellness Hub"
+    ) {
+      const filteredArray = yogaPackageFilter.filter((item) => {
+        return item.name === "10 CLASSES PASS";
+      });
+      setYogaPackage(filteredArray);
+    } else if (
+      moreSessions.length <= 3 &&
+      selectedDay[session_id].name !== "Sadhana - Kigali Wellness Hub"
+    ) {
+      const filteredArray = yogaPackageFilter.filter((item) => {
+        return item.name === "5 CLASSES PASS";
+      });
+      setYogaPackage(filteredArray);
+    }
   };
   const removeBookMoreSessions = (index) => {
     // Remove the selected date from the source array
@@ -293,6 +328,29 @@ function Planning() {
     const updatedSourceDates = moreSessions.filter((date, i) => i !== index);
     setMoreSessions(updatedSourceDates);
     setAheadSession([...ahead_session, movedDate]);
+    if (
+      selectedDay[session_id].name == "Sadhana - Kigali Wellness Hub" 
+    ) {
+      setErrorMessages("")
+      setDisableBookMore(false);
+      const filteredArray = yogaPackageFilter.filter((item) => {
+        return ![
+          "5 CLASSES PASS",
+          "10 CLASSES PASS",
+          "NEW STUDENT- 2 WEEKS PASS",
+        ].includes(item.name);
+      });
+      setYogaPackage(filteredArray);
+    }
+    if (
+      moreSessions.length < 4 &&
+      selectedDay[session_id].name !== "Sadhana - Kigali Wellness Hub"
+    ) {
+      const filteredArray = yogaPackageFilter.filter((item) => {
+        return item.name !== "SADHANA 4 CLASSES PASS";
+      });
+      setYogaPackage(filteredArray);
+    }
   };
   return (
     <>
@@ -778,11 +836,7 @@ function Planning() {
                           <div className="add_session_list pt-3">
                             {moreSessions.length > 0 &&
                               moreSessions.map((session, index) => (
-                                <div
-                                  className="session_option p-3"
-                                  key={index}
-                                  
-                                >
+                                <div className="session_option p-3" key={index}>
                                   <div className="card_info">
                                     <div className="card_info_name">
                                       {selectedDay.length > 0 &&
@@ -806,7 +860,9 @@ function Planning() {
                                       viewBox="0 0 24 24"
                                       fill="none"
                                       xmlns="http://www.w3.org/2000/svg"
-                                      onClick={() => removeBookMoreSessions(index)}
+                                      onClick={() =>
+                                        removeBookMoreSessions(index)
+                                      }
                                     >
                                       <g
                                         id="SVGRepo_bgCarrier"
@@ -858,14 +914,19 @@ function Planning() {
                             </div>
                             <div className="offcanvas-body">
                               <div className="add_session_list pt-3">
+                                {errorMessages && <p className="text-error">{errorMessages}</p>}
                                 {ahead_session.length > 0 ? (
                                   ahead_session.map((session, index) => (
                                     <div
                                       className="session_option p-3"
+                                      type="button"
                                       key={index}
-                                      onClick={() =>
-                                        handleBookMoreSessions(index)
-                                      }
+                                      {...(disableBookMore
+                                        ? {}
+                                        : {
+                                            onClick: () =>
+                                              handleBookMoreSessions(index),
+                                          })}
                                     >
                                       <div className="card_info">
                                         <div className="card_info_name">
