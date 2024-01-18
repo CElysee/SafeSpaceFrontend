@@ -5,6 +5,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import "react-toastify/dist/ReactToastify.css";
+import "../auth/Auth.css"
 
 const override = {
   display: "block",
@@ -103,7 +104,6 @@ function Login() {
                     </div>
                   </div>
                 </div>
-
                 <div className="col-lg-6">
                   <div className="p-lg-5 p-4">
                     <div>

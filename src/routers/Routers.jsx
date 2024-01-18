@@ -4,6 +4,7 @@ import Home from "../pages/Checkout";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import Dashboard from "../pages/user/Dashboard";
+import AdminDashboard from "../pages/admin/Dashboard";
 import ThankYou from "../pages/ThankYou";
 import Planning from "../components/planning/Planning";
 
@@ -36,6 +37,9 @@ function Routers() {
       <Route path="/thank-you" element={<ThankYou />} />
       <Route path="/user/*" element="">
         <Route path="dashboard" element={<Dashboard />} onLogout={handleLogout} />
+      </Route>
+      <Route path="/admin/*" element="">
+        <Route path="dashboard" element={<AdminDashboard />} onLogout={handleLogout} />
       </Route>
     </Routes>
   );

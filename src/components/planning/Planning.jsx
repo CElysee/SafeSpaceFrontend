@@ -56,6 +56,8 @@ function Planning() {
     booking_date: "",
     booking_slot_time: "",
     booking_slot_number: "",
+    booking_more_sessions: "",
+    payment_package_id: "",
   });
 
   useEffect(() => {
@@ -201,7 +203,7 @@ function Planning() {
   const makePayment = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    const jsonFormattedData = JSON.stringify(moreSessions);
     try {
       const params = {
         password: inputValues.password,
@@ -215,7 +217,10 @@ function Planning() {
         booking_date: days_list[dayActive].days,
         booking_slot_time: selectedDay[session_id].time,
         booking_slot_number: inputValues.booking_slot_number,
+        booking_more_sessions: moreSessions,
+        payment_package_id:yogaPackageId
       };
+      console.log(params);
       const config = {
         headers: {
           Accept: "application/json",
@@ -228,7 +233,7 @@ function Planning() {
         params,
         config
       );
-      //   console.log(submitPayment.data);
+        console.log(submitPayment.data);
       setLoading(false);
       navigate("/thank-you");
     } catch (error) {
@@ -1022,7 +1027,7 @@ function Planning() {
                                     Validity: {yoga.session_time}
                                   </div>
                                 </div>
-                                <div className="card card--white card--sm">
+                                <div className="card_input card--white card--sm">
                                   <div className="card__chip"></div>
                                   <div className="card__content">
                                     <div className="card__text">

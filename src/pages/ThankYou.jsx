@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom"
 
 function ThankYou() {
+  document.querySelector(".modal-backdrop").style.display = "none";
   return (
     <section
       className="section bg-beige pt-5"

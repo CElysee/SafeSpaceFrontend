@@ -11,39 +11,34 @@ function Header(props) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (access_token) {
-  //     const getUser = async () => {
-  //       try {
-  //         const response = await axiosInstance.get("auth/users/me", {
-  //           headers: {
-  //             Accept: "application/json",
-  //             Authorization: `Bearer ${access_token}`,
-  //           },
-  //         });
-  //         setUserName(response.data.name);
-  //         setIsLoggedIn(true);
-  //       } catch (error) {
-  //         if (error.response.status === 401 || error.response.status === 406) {
-  //           navigate("/sign-in");
-  //         }
-  //         console.log(error);
-  //       }
-  //     };
-  //     getUser();
-  //   }
-  //   // Check if user_id exists in localStorage
-  //   setUserId(localStorage.getItem("user_id"));
-  //   setAccess_token(localStorage.getItem("access_token"));
-  // }, []);
-
-  // const handleLogout = () => {
-  //   setIsLoggedIn(false);
-  //   localStorage.removeItem("access_token");
-  //   localStorage.removeItem("user_role");
-  //   localStorage.removeItem("user_id");
-  //   navigate("/sign-in");
-  // };
+  useEffect(() => {
+    const access_token_user = localStorage.getItem("access_token");
+    if (access_token_user) {
+      setIsLoggedIn(true);
+    }
+    if (access_token_user) {
+      const getUser = async () => {
+        try {
+          const response = await axiosInstance.get("auth/users/me", {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${access_token}`,
+            },
+          });
+          setUserName(response.data.name);
+        } catch (error) {
+          if (error.response.status === 401 || error.response.status === 406) {
+            navigate("/sign-in");
+          }
+          console.log(error);
+        }
+      };
+      getUser();
+    }
+    // Check if user_id exists in localStorage
+    setUserId(localStorage.getItem("user_id"));
+    setAccess_token(localStorage.getItem("access_token"));
+  }, []);
 
   return (
     <div>
@@ -124,10 +119,7 @@ function Header(props) {
                 </div>
               </li>
               <li className="nav-item">
-                <Link
-                  to={"/planning"}
-                  className="nav-link fs-15"
-                >
+                <Link to={"/planning"} className="nav-link fs-15">
                   Planning
                 </Link>
               </li>
@@ -152,57 +144,21 @@ function Header(props) {
               </li>
             </ul>
             {isLoggedIn ? (
-              <>
-                <button
-                  to="/sign-in"
-                  className="btn btn-primary mr-3"
-                  onClick={handleLogout}
-                >
-                  Log out
-                </button>
-                <span className="d-flex align-items-center">
-                  <svg
-                    viewBox="0 0 20 20"
-                    width="25px"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      {" "}
-                      <path
-                        d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
-                        stroke="#000000"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      ></path>{" "}
-                    </g>
-                  </svg>
-                  <span className="text-start ms-xl-2">
-                    <span className="d-none d-xl-inline-block ms-1 fw-semibold user-name-text">
-                      {userName}
-                    </span>
-                  </span>
-                </span>
-              </>
+              ""
             ) : (
-              <div className="">
-                <Link
-                  to="/sign-in"
-                  className="btn btn-link fw-medium text-decoration-none text-body"
-                >
-                  Sign in
-                </Link>
-                <Link to="/sign-up" className="btn btn-primary">
-                  Sign Up
-                </Link>
-              </div>
+              <>
+                <div className="">
+                  <Link
+                    to="/sign-in"
+                    className="btn btn-link fw-medium text-decoration-none text-body"
+                  >
+                    Sign in
+                  </Link>
+                  <Link to="/sign-up" className="btn btn-primary">
+                    Sign Up
+                  </Link>
+                </div>
+              </>
             )}
           </div>
         </div>
