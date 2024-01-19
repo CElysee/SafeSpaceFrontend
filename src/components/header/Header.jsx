@@ -47,7 +47,7 @@ function Header(props) {
         id="navbar"
       >
         <div className="container">
-          <a className="navbar-brand" href="index.html">
+          <a className="navbar-brand" href="https://safespaceyoga.rw/">
             <img
               src="/assets/images/logo.png"
               className="card-logo card-logo-dark"
@@ -79,7 +79,7 @@ function Header(props) {
               <li className="nav-item">
                 <Link
                   className="nav-link fs-15 active"
-                  to="https://webtesting.co.rw/safespace/"
+                  to="https://safespaceyoga.rw/"
                 >
                   Home
                 </Link>
@@ -90,14 +90,11 @@ function Header(props) {
                   <i className="ri-arrow-down-s-fill align-middle ms-1"></i>
                 </a>
                 <div className="dropdown-content bg-beige">
-                  <a href="https://webtesting.co.rw/safespace/the-space/">
+                  <a href="https://safespaceyoga.rw/the-space/">
                     Our values
                   </a>
-                  <a href="https://webtesting.co.rw/safespace/about/#meet_the_founder">
+                  <a href="https://safespaceyoga.rw/about/#meet_the_founder">
                     Meet our founder
-                  </a>
-                  <a href="https://webtesting.co.rw/safespace/teacher-approach/">
-                    Teacher Approach
                   </a>
                 </div>
               </li>
@@ -107,13 +104,13 @@ function Header(props) {
                   <i className="ri-arrow-down-s-fill align-middle ms-1"></i>
                 </a>
                 <div className="dropdown-content bg-beige">
-                  <a href="https://webtesting.co.rw/safespace/hatha-yoga/">
+                  <a href="https://safespaceyoga.rw/hatha-yoga/">
                     Hatha Yoga
                   </a>
-                  <a href="https://webtesting.co.rw/safespace/sadhana/">
+                  <a href="https://safespaceyoga.rw/sadhana/">
                     Sadhana
                   </a>
-                  <a href="https://webtesting.co.rw/safespace/hatha-flow/">
+                  <a href="https://safespaceyoga.rw/hatha-flow/">
                     Hatha Flow
                   </a>
                 </div>
@@ -125,7 +122,7 @@ function Header(props) {
               </li>
               <li className="nav-item">
                 <Link
-                  to={"https://webtesting.co.rw/safespace/schedules/"}
+                  to={"https://safespaceyoga.rw/packages/"}
                   className="nav-link fs-15"
                 >
                   Packages
@@ -136,7 +133,7 @@ function Header(props) {
               </li> */}
               <li className="nav-item">
                 <Link
-                  to="https://webtesting.co.rw/safespace/contact/"
+                  to="https://safespaceyoga.rw/contact/"
                   className="nav-link fs-15"
                 >
                   Contact
