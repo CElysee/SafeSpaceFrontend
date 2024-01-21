@@ -84,21 +84,28 @@ function Planning() {
     setStartDate(formattedStartDate);
     setEndDate(formattedEndDate);
     const fetchMembership = async () => {
-      const country_response = await axiosInstance.get("/country/list", {});
-      const yoga_location = await axiosInstance.get(
-        "/yoga_class_location/list",
-        {}
-      );
-      const ahead_session = await axiosInstance.get(
-        "/planningsession_weekly_list",
-        {}
-      );
-      setCountry(country_response.data);
-      setYogaLocation(yoga_location.data);
-      setAheadSession(ahead_session.data);
-      setResetMoreSessions(ahead_session.data);
-      setMoreSessions([]);
-      setErrorMessages("")
+      try{
+        const country_response = await axiosInstance.get("/country/list", {});
+        const yoga_location = await axiosInstance.get(
+          "/yoga_class_location/list",
+          {}
+        );
+        const ahead_session = await axiosInstance.get(
+          "/planningsession_weekly_list",
+          {}
+        );
+        setCountry(country_response.data);
+        setYogaLocation(yoga_location.data);
+        setAheadSession(ahead_session.data);
+        setResetMoreSessions(ahead_session.data);
+        setMoreSessions([]);
+        setErrorMessages("")
+      }
+      catch (error) {
+        // Handle errors, you might want to display an error message to the user
+        console.error("Error fetching data:", error);
+        setErrorMessages("Error fetching data. Please try again later.");
+      }
     };
 
     const fetchDays = async () => {
