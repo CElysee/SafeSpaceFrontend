@@ -364,7 +364,6 @@ function Planning() {
       setYogaPackage(filteredArray);
     }
   };
-  console.log(days_list)
   return (
     <>
       <section
@@ -471,18 +470,19 @@ function Planning() {
                   </button>
 
                   <div className="date_list pt-5">
-                    {days_list.map((dates, index) => (
-                      <button
-                        className={`tab btn ${
-                          index === dayActive ? "btn_active" : ""
-                        }`}
-                        key={index}
-                        onClick={() => handleDayActive(index)}
-                      >
-                        <div className="left hole"></div>
-                        <div className="number">{dates.days}</div>
-                      </button>
-                    ))}
+                    {days_list.length > 0 &&
+                      days_list.map((dates, index) => (
+                        <button
+                          className={`tab btn ${
+                            index === dayActive ? "btn_active" : ""
+                          }`}
+                          key={index}
+                          onClick={() => handleDayActive(index)}
+                        >
+                          <div className="left hole"></div>
+                          <div className="number">{dates.days}</div>
+                        </button>
+                      ))}
                   </div>
                   <div className="session_list">
                     {selectedDay.length > 0}
