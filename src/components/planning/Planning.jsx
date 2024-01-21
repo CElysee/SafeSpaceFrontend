@@ -467,7 +467,7 @@ function Planning() {
                   </svg>
                 </div>
               </button>
-              {days_list.length > 0 ? (
+              {/* {days_list.length > 0 ? (
                 <>
                   <div className="date_list pt-5">
                     {days_list.map((dates, index) => (
@@ -654,7 +654,7 @@ function Planning() {
                   foregroundColor="#ecebeb"
                   style={{marginTop: "25px"}}
                 ></ContentLoader>
-              )}
+              )} */}
             </div>
             <div
               className="modal fade"
