@@ -109,7 +109,6 @@ function Planning() {
         setErrorMessages("Error fetching data. Please try again later.");
       }
     };
-
     const fetchDays = async () => {
       try {
         const response = await axiosInstance.get(`/planning/list`);
@@ -117,14 +116,14 @@ function Planning() {
         if (response && response.data) {
           // console.log("Response:", response.data[dayActive].sessions.name);
           setDays_list(response.data);
+          setContentLoading(false);
           setSelectedDay(response.data[0].sessions);
           setDayActive(0);
-          setYogaPackage(yogaSessions.data);
-          setYogaPackageFilter(yogaSessions.data);
-          setContentLoading(false);
         } else {
           console.log("Empty response or missing data");
         }
+        setYogaPackage(yogaSessions.data);
+        setYogaPackageFilter(yogaSessions.data);
       } catch (error) {
         // Handle specific errors or log them
         if (error.response) {
@@ -365,6 +364,7 @@ function Planning() {
       setYogaPackage(filteredArray);
     }
   };
+  console.log(days_list)
   return (
     <>
       <section
