@@ -15,25 +15,23 @@ function Header(props) {
     const access_token_user = localStorage.getItem("access_token");
     if (access_token_user) {
       setIsLoggedIn(true);
-    }
-    if (access_token_user) {
-      const getUser = async () => {
-        try {
-          const response = await axiosInstance.get("auth/users/me", {
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${access_token}`,
-            },
-          });
-          setUserName(response.data.name);
-        } catch (error) {
-          if (error.response.status === 401 || error.response.status === 406) {
-            navigate("/sign-in");
-          }
-          console.log(error);
-        }
-      };
-      getUser();
+      // const getUser = async () => {
+      //   try {
+      //     const response = await axiosInstance.get("auth/users/me", {
+      //       headers: {
+      //         Accept: "application/json",
+      //         Authorization: `Bearer ${access_token}`,
+      //       },
+      //     });
+      //     setUserName(response.data.name);
+      //   } catch (error) {
+      //     if (error.response.status === 401 || error.response.status === 406) {
+      //       navigate("/sign-in");
+      //     }
+      //     console.log(error);
+      //   }
+      // };
+      // getUser();
     }
     // Check if user_id exists in localStorage
     setUserId(localStorage.getItem("user_id"));

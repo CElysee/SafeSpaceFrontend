@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "../membershipInfo/MembershipInfo.css";
 import { ToastContainer, toast } from "react-toastify";
 import { set } from "date-fns";
+import axios from "axios";
 
 const override = {
   display: "block",
@@ -111,7 +112,7 @@ function Planning() {
     const fetchDays = async () => {
       try {
         const response = await axiosInstance.get(`/planning/list`);
-        const yogaSessions = await axiosInstance.get(`/yoga_sessions/list`);
+        const yogaSessions = await axios.get("https://app.safespaceyoga.rw:8000/yoga_sessions/list");
         if (response && response.data) {
           // console.log("Response:", response.data[dayActive].sessions.name);
           setDays_list(response.data);
