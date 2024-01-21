@@ -8,6 +8,7 @@ import RiseLoader from "react-spinners/RiseLoader";
 import "react-toastify/dist/ReactToastify.css";
 import "../membershipInfo/MembershipInfo.css";
 import { ToastContainer, toast } from "react-toastify";
+import ContentLoader from "react-content-loader";
 import { set } from "date-fns";
 import axios from "axios";
 
@@ -85,7 +86,7 @@ function Planning() {
     setStartDate(formattedStartDate);
     setEndDate(formattedEndDate);
     const fetchMembership = async () => {
-      try{
+      try {
         const country_response = await axiosInstance.get("/country/list", {});
         const yoga_location = await axiosInstance.get(
           "/yoga_class_location/list",
@@ -100,9 +101,8 @@ function Planning() {
         setAheadSession(ahead_session.data);
         setResetMoreSessions(ahead_session.data);
         setMoreSessions([]);
-        setErrorMessages("")
-      }
-      catch (error) {
+        setErrorMessages("");
+      } catch (error) {
         // Handle errors, you might want to display an error message to the user
         console.error("Error fetching data:", error);
         setErrorMessages("Error fetching data. Please try again later.");
@@ -112,7 +112,7 @@ function Planning() {
     const fetchDays = async () => {
       try {
         const response = await axiosInstance.get(`/planning/list`);
-        const yogaSessions = await axios.get("https://app.safespaceyoga.rw:8000/yoga_sessions/list");
+        const yogaSessions = await axiosInstance.get("/yoga_sessions/list");
         if (response && response.data) {
           // console.log("Response:", response.data[dayActive].sessions.name);
           setDays_list(response.data);
@@ -172,7 +172,7 @@ function Planning() {
     setMoreSessions([]);
     setAheadSession(resetMoreSessions);
     setDisableBookMore(false);
-    setErrorMessages("")
+    setErrorMessages("");
   };
   const handleSession_id = (id) => {
     setSession_id(id);
@@ -226,7 +226,7 @@ function Planning() {
         booking_slot_time: selectedDay[session_id].time,
         booking_slot_number: inputValues.booking_slot_number,
         booking_more_sessions: moreSessions,
-        payment_package_id:yogaPackageId
+        payment_package_id: yogaPackageId,
       };
       console.log(params);
       const config = {
@@ -241,7 +241,7 @@ function Planning() {
         params,
         config
       );
-        console.log(submitPayment.data);
+      console.log(submitPayment.data);
       setLoading(false);
       navigate("/thank-you");
     } catch (error) {
@@ -310,7 +310,7 @@ function Planning() {
       selectedDay[session_id].name == "Sadhana - Kigali Wellness Hub" &&
       moreSessions.length >= 2
     ) {
-      setErrorMessages("You can't book more than 4 sessions")
+      setErrorMessages("You can't book more than 4 sessions");
       setDisableBookMore(true);
       const filteredArray = yogaPackageFilter.filter((item) => {
         return item.name === "SADHANA 4 CLASSES PASS";
@@ -341,10 +341,8 @@ function Planning() {
     const updatedSourceDates = moreSessions.filter((date, i) => i !== index);
     setMoreSessions(updatedSourceDates);
     setAheadSession([...ahead_session, movedDate]);
-    if (
-      selectedDay[session_id].name == "Sadhana - Kigali Wellness Hub" 
-    ) {
-      setErrorMessages("")
+    if (selectedDay[session_id].name == "Sadhana - Kigali Wellness Hub") {
+      setErrorMessages("");
       setDisableBookMore(false);
       const filteredArray = yogaPackageFilter.filter((item) => {
         return ![
@@ -469,178 +467,194 @@ function Planning() {
                   </svg>
                 </div>
               </button>
-              <div className="date_list pt-5">
-                {days_list &&
-                  days_list.map((dates, index) => (
-                    <button
-                      className={`tab btn ${
-                        index === dayActive ? "btn_active" : ""
-                      }`}
-                      key={index}
-                      onClick={() => handleDayActive(index)}
-                    >
-                      <div className="left hole"></div>
-                      <div className="number">{dates.days}</div>
-                    </button>
-                  ))}
-              </div>
-              <div className="session_list">
-                {selectedDay.map((session_list, index) => (
-                  <div className="session mt-5 p-3 col-lg-6" key={index}>
-                    <div className="name">
-                      {""}
-                      <svg
-                        width="25px"
-                        height="25px"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
+              {days_list.length > 0 ? (
+                <>
+                  <div className="date_list pt-5">
+                    {days_list.map((dates, index) => (
+                      <button
+                        className={`tab btn ${
+                          index === dayActive ? "btn_active" : ""
+                        }`}
+                        key={index}
+                        onClick={() => handleDayActive(index)}
                       >
-                        <path
-                          d="M14.5714 15.0036L15.4286 16.8486C15.4286 16.8486 19.2857 17.6678 19.2857 19.6162C19.2857 21 17.5714 21 17.5714 21H13L10.75 19.75"
-                          stroke="#000000"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M9.42864 15.0036L8.5715 16.8486C8.5715 16.8486 4.71436 17.6678 4.71436 19.6162C4.71436 21 6.42864 21 6.42864 21H8.50007L10.7501 19.75L13.5001 18"
-                          stroke="#000000"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M3 15.9261C3 15.9261 5.14286 15.4649 6.42857 15.0036C7.71429 8.54595 11.5714 9.00721 12 9.00721C12.4286 9.00721 16.2857 8.54595 17.5714 15.0036C18.8571 15.4649 21 15.9261 21 15.9261"
-                          stroke="#000000"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M12 7C13.1046 7 14 6.10457 14 5C14 3.89543 13.1046 3 12 3C10.8954 3 10 3.89543 10 5C10 6.10457 10.8954 7 12 7Z"
-                          stroke="#000000"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <h4>{session_list.name}</h4>
-                    </div>
-                    <div className="time">
-                      {" "}
-                      <svg
-                        width="25px"
-                        height="25px"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
-                          stroke="#000000"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M12 6V12"
-                          stroke="#000000"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M16.24 16.24L12 12"
-                          stroke="#000000"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span className="session_time">{session_list.time}</span>
-                    </div>
-                    <div className="location pt-2">
-                      <div className="location_icon">
-                        <svg
-                          width="25px"
-                          height="25px"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M9 11L11 13L15 9M19 10.2C19 14.1764 15.5 17.4 12 21C8.5 17.4 5 14.1764 5 10.2C5 6.22355 8.13401 3 12 3C15.866 3 19 6.22355 19 10.2Z"
-                            stroke="#000000"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        <span className="location_name">
-                          {session_list.location}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="session_date pt-1">
-                      <div className="session_date_icon">
-                        <svg
-                          width="25px"
-                          height="25px"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V10M20 10H4M8 3V7M16 3V7"
-                            stroke="#000000"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                          />
-                          <rect
-                            x="6"
-                            y="12"
-                            width="3"
-                            height="3"
-                            rx="0.5"
-                            fill="#000000"
-                          />
-                          <rect
-                            x="10.5"
-                            y="12"
-                            width="3"
-                            height="3"
-                            rx="0.5"
-                            fill="#000000"
-                          />
-                          <rect
-                            x="15"
-                            y="12"
-                            width="3"
-                            height="3"
-                            rx="0.5"
-                            fill="#000000"
-                          />
-                        </svg>
-                        <span className="date">
-                          {days_list[dayActive].days}
-                        </span>
-                      </div>
-                      <div className="session_book_btn">
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModal"
-                          onClick={() => handleSession_id(index)}
-                        >
-                          Book
-                        </button>
-                      </div>
-                    </div>
+                        <div className="left hole"></div>
+                        <div className="number">{dates.days}</div>
+                      </button>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <div className="session_list">
+                    {selectedDay.length > 0}
+                    {selectedDay.map((session_list, index) => (
+                      <div className="session mt-5 p-3 col-lg-6" key={index}>
+                        <div className="name">
+                          {""}
+                          <svg
+                            width="25px"
+                            height="25px"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M14.5714 15.0036L15.4286 16.8486C15.4286 16.8486 19.2857 17.6678 19.2857 19.6162C19.2857 21 17.5714 21 17.5714 21H13L10.75 19.75"
+                              stroke="#000000"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M9.42864 15.0036L8.5715 16.8486C8.5715 16.8486 4.71436 17.6678 4.71436 19.6162C4.71436 21 6.42864 21 6.42864 21H8.50007L10.7501 19.75L13.5001 18"
+                              stroke="#000000"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M3 15.9261C3 15.9261 5.14286 15.4649 6.42857 15.0036C7.71429 8.54595 11.5714 9.00721 12 9.00721C12.4286 9.00721 16.2857 8.54595 17.5714 15.0036C18.8571 15.4649 21 15.9261 21 15.9261"
+                              stroke="#000000"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M12 7C13.1046 7 14 6.10457 14 5C14 3.89543 13.1046 3 12 3C10.8954 3 10 3.89543 10 5C10 6.10457 10.8954 7 12 7Z"
+                              stroke="#000000"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <h4>{session_list.name}</h4>
+                        </div>
+                        <div className="time">
+                          {" "}
+                          <svg
+                            width="25px"
+                            height="25px"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+                              stroke="#000000"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M12 6V12"
+                              stroke="#000000"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M16.24 16.24L12 12"
+                              stroke="#000000"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <span className="session_time">
+                            {session_list.time}
+                          </span>
+                        </div>
+                        <div className="location pt-2">
+                          <div className="location_icon">
+                            <svg
+                              width="25px"
+                              height="25px"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M9 11L11 13L15 9M19 10.2C19 14.1764 15.5 17.4 12 21C8.5 17.4 5 14.1764 5 10.2C5 6.22355 8.13401 3 12 3C15.866 3 19 6.22355 19 10.2Z"
+                                stroke="#000000"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            <span className="location_name">
+                              {session_list.location}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="session_date pt-1">
+                          <div className="session_date_icon">
+                            <svg
+                              width="25px"
+                              height="25px"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V10M20 10H4M8 3V7M16 3V7"
+                                stroke="#000000"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                              />
+                              <rect
+                                x="6"
+                                y="12"
+                                width="3"
+                                height="3"
+                                rx="0.5"
+                                fill="#000000"
+                              />
+                              <rect
+                                x="10.5"
+                                y="12"
+                                width="3"
+                                height="3"
+                                rx="0.5"
+                                fill="#000000"
+                              />
+                              <rect
+                                x="15"
+                                y="12"
+                                width="3"
+                                height="3"
+                                rx="0.5"
+                                fill="#000000"
+                              />
+                            </svg>
+                            <span className="date">
+                              {days_list[dayActive].days}
+                            </span>
+                          </div>
+                          <div className="session_book_btn">
+                            <button
+                              type="button"
+                              className="btn btn-primary"
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModal"
+                              onClick={() => handleSession_id(index)}
+                            >
+                              Book
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <ContentLoader
+                  speed={2}
+                  width={1200}
+                  height={200}
+                  viewBox="0 0 400 100"
+                  backgroundColor="#f3f3f3"
+                  foregroundColor="#ecebeb"
+                  style={{marginTop: "25px"}}
+                ></ContentLoader>
+              )}
             </div>
             <div
               className="modal fade"
@@ -927,7 +941,9 @@ function Planning() {
                             </div>
                             <div className="offcanvas-body">
                               <div className="add_session_list pt-3">
-                                {errorMessages && <p className="text-error">{errorMessages}</p>}
+                                {errorMessages && (
+                                  <p className="text-error">{errorMessages}</p>
+                                )}
                                 {ahead_session.length > 0 ? (
                                   ahead_session.map((session, index) => (
                                     <div
