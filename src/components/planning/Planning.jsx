@@ -114,7 +114,7 @@ function Planning() {
         const response = await axiosInstance.get(`/planning/list`);
         const yogaSessions = await axiosInstance.get("/yoga_sessions/list");
         if (response && response.data) {
-          // console.log("Response:", response.data[dayActive].sessions.name);
+          // console.log("Response:", response.data);
           setDays_list(response.data);
           setContentLoading(false);
           setSelectedDay(response.data[0].sessions);
@@ -470,7 +470,7 @@ function Planning() {
                   </button>
 
                   <div className="date_list pt-5">
-                    {days_list.length > 0 &&
+                    {days_list && Array.isArray(days_list) ? (
                       days_list.map((dates, index) => (
                         <button
                           className={`tab btn ${
@@ -482,7 +482,12 @@ function Planning() {
                           <div className="left hole"></div>
                           <div className="number">{dates.days}</div>
                         </button>
-                      ))}
+                      ))
+                    ) : (
+                      <>
+                        <p style={{textAlign: "center"}}>No data available</p>
+                      </>
+                    )}
                   </div>
                   <div className="session_list">
                     {selectedDay.length > 0}
