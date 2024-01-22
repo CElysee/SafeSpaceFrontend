@@ -49,6 +49,7 @@ function Planning() {
   const [inputValues, setInputValues] = useState({
     email: "",
     names: "",
+    phone_number: "",
     address: "",
     city: "",
     country_id: "",
@@ -217,6 +218,7 @@ function Planning() {
         yoga_session_id: yogaPackageId,
         billing_names: inputValues.names,
         billing_email: inputValues.email,
+        billing_phone_number:inputValues.phone_number,
         billing_address: inputValues.address,
         billing_city: inputValues.city,
         billing_country_id: inputValues.country_id,
@@ -227,14 +229,14 @@ function Planning() {
         booking_more_sessions: moreSessions,
         payment_package_id: yogaPackageId,
       };
-      console.log(params);
+      // console.log(params);
       const config = {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
       };
-      console.log(params);
+      // console.log(params);
       const submitPayment = await axiosInstance.post(
         "/yoga_class_booking/create",
         params,
@@ -833,7 +835,7 @@ function Planning() {
                                     strokeLinejoin="round"
                                   />
                                 </svg>
-                                Add sessions
+                                Add more sessions
                               </button>
                               <div className="add_session_list pt-3">
                                 {moreSessions.length > 0 &&
@@ -1176,6 +1178,25 @@ function Planning() {
                                               <div className="col-lg-6">
                                                 <div className="mb-4">
                                                   <label
+                                                    htmlFor="PhoneNumber"
+                                                    className="form-label form_paragraph"
+                                                  >
+                                                    Phone Number
+                                                  </label>
+                                                  <input
+                                                    id="PhoneNumber"
+                                                    type="number"
+                                                    className="form-control bg-light border-light"
+                                                    placeholder="07** *** **"
+                                                    name="phone_number"
+                                                    value={inputValues.phone_number}
+                                                    onChange={handleInputChange}
+                                                  />
+                                                </div>
+                                              </div>
+                                              <div className="col-lg-6">
+                                                <div className="mb-4">
+                                                  <label
                                                     htmlFor="address"
                                                     className="form-label form_paragraph"
                                                   >
@@ -1192,8 +1213,6 @@ function Planning() {
                                                   />
                                                 </div>
                                               </div>
-                                            </div>
-                                            <div className="row">
                                               <div className="col-lg-6">
                                                 <div className="mb-4">
                                                   <label
@@ -1213,6 +1232,9 @@ function Planning() {
                                                   />
                                                 </div>
                                               </div>
+                                            </div>
+                                            <div className="row">
+                                              
                                               <div className="col-lg-6">
                                                 <div className="mb-4">
                                                   <label
