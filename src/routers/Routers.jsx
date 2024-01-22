@@ -30,6 +30,7 @@ function Routers() {
   }, []);
   return (
     <Routes>
+      <Route path="/" element={<Planning />} />
       <Route path="/book-membership/:id" element={<Home />} />
       <Route path="/planning" element={<Planning />} />
       <Route path="/sign-in" element={<Login />} />

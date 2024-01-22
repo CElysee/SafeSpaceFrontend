@@ -46,7 +46,6 @@ function Planning() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [disableBookMore, setDisableBookMore] = useState(false);
-  const [contentLoading, setContentLoading] = useState(true);
   const [inputValues, setInputValues] = useState({
     email: "",
     names: "",
@@ -116,7 +115,6 @@ function Planning() {
         if (response && response.data) {
           // console.log("Response:", response.data);
           setDays_list(response.data);
-          setContentLoading(false);
           setSelectedDay(response.data[0].sessions);
           setDayActive(0);
         } else {
@@ -407,7 +405,7 @@ function Planning() {
       >
         <div className="container">
           <div className="row align-items-center gy-4">
-            {days_list && selectedDay && moreSessions && ahead_session ? (
+            {days_list.length > 0 && selectedDay.length > 0 && moreSessions && ahead_session.length > 0 ? (
               <>
                 <div className="col-lg-12">
                   <button
@@ -1360,7 +1358,7 @@ function Planning() {
                 viewBox="0 0 400 100"
                 backgroundColor="#f3f3f3"
                 foregroundColor="#ecebeb"
-                style={{ marginTop: "25px" }}
+                style={{ marginTop: "35px" }}
               ></ContentLoader>
             )}
           </div>
