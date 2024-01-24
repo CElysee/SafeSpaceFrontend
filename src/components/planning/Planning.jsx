@@ -244,7 +244,9 @@ function Planning() {
       );
       console.log(submitPayment.data);
       setLoading(false);
-      navigate("/thank-you");
+      window.location.href = submitPayment.data.redirection_url;
+      // navigate(submitPayment.data.redirection_url);
+      // navigate("/thank-you");
     } catch (error) {
       console.error("Error making a payment", error);
       setLoading(false);
