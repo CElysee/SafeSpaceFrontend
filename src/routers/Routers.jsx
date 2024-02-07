@@ -7,6 +7,7 @@ import Dashboard from "../pages/user/Dashboard";
 import AdminDashboard from "../pages/admin/Dashboard";
 import ThankYou from "../pages/ThankYou";
 import Planning from "../components/planning/Planning";
+import PaymentConfirmation from "../pages/PaymentConfirmation";
 
 function Routers() {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ function Routers() {
       <Route path="/sign-in" element={<Login />} />
       <Route path="/sign-up" element={<Register />} />
       <Route path="/thank-you" element={<ThankYou />} />
+      <Route path="/PaymentConfirmation" element={<PaymentConfirmation />} />
       <Route path="/user/*" element="">
         <Route path="dashboard" element={<Dashboard />} onLogout={handleLogout} />
       </Route>

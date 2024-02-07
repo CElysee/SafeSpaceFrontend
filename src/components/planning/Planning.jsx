@@ -242,10 +242,11 @@ function Planning() {
         params,
         config
       );
-      console.log(submitPayment.data);
+      console.log(submitPayment);
       setLoading(false);
+      // console.log(params)
       window.location.href = submitPayment.data.redirection_url;
-      // navigate(submitPayment.data.redirection_url);
+      navigate(submitPayment.data.redirection_url);
       // navigate("/thank-you");
     } catch (error) {
       console.error("Error making a payment", error);
