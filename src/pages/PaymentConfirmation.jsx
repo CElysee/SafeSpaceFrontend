@@ -1,62 +1,66 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 
 function PaymentConfirmation() {
-  const [transId, setTransId] = useState("");
-  const [ccdApproval, setCcdApproval] = useState("");
-  const [transactionToken, setTransactionToken] = useState("");
-  const [companyRef, setCompanyRef] = useState("");
-  const [pnrID, setPnrID] = useState("");
+  //   const [transId, setTransId] = useState("");
+  //   const [ccdApproval, setCcdApproval] = useState("");
+  //   const [transactionToken, setTransactionToken] = useState("");
+  //   const [companyRef, setCompanyRef] = useState("");
+  //   const [pnrID, setPnrID] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("useEffect is running");
     // Get the current URL
     const queryString = window.location.search;
     // Parse the URL and extract parameters
     const urlParams = new URLSearchParams(queryString);
-
+  
     // Extract values for TransID, CCDapproval, TransactionToken, and CompanyRef
-    const transId = setTransId(urlParams.get("TransID"));
-    const ccdApproval = setCcdApproval(urlParams.get("CCDapproval"));
-    const transactionToken = setTransactionToken(
-      urlParams.get("TransactionToken")
-    );
-    const companyRef = setCompanyRef(urlParams.get("CompanyRef"));
-    const pnrID = setPnrID(urlParams.get("PnrID"));
-    // Add any additional logic or state updates based on these values
+    const transId = urlParams.get("TransID");
+    const ccdApproval = urlParams.get("CCDapproval");
+    const transactionToken = urlParams.get("TransactionToken");
+    const companyRef = urlParams.get("CompanyRef");
+    const pnrID = urlParams.get("PnrID");
+  
+    console.log("Params:", { transId, ccdApproval, transactionToken, companyRef, pnrID });
+  
+    const updatePaymentStatus = async () => {
+      const params = {
+        transId,
+        ccdApproval,
+        transactionToken,
+        companyRef,
+        pnrID,
+      };
+  
+      const config = {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      };
+  
+      try {
+        const response = await axiosInstance.post("/yoga_class_booking/update_payment", null, {
+          params,
+          config,
+        });
+        if (response.status === 200) {
+          console.log("Payment status updated successfully");
+          navigate("/thank-you");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+  
+    // Call the updatePaymentStatus function
+    updatePaymentStatus();
   }, []);
 
-  const updatePaymentStatus = async () => {
-    const params = {
-      transId,
-      ccdApproval,
-      transactionToken,
-      companyRef,
-      pnrID,
-    };
-    const config = {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    };
-    try {
-      const response = await axiosInstance.post("/yoga_class_booking/update_payment",null, {
-        params,
-        config, 
-      });
-    //   console.log('Response:', response);
-      if (response.status === 200) {
-        console.log('Payment status updated successfully');
-        navigate("/thank-you");
-      }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-  };
-  updatePaymentStatus();
   return (
     <section
       className="section bg-beige pt-5"

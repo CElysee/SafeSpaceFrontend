@@ -334,7 +334,11 @@ function Planning() {
       selectedDay[session_id].name !== "Sadhana - Kigali Wellness Hub"
     ) {
       const filteredArray = yogaPackageFilter.filter((item) => {
-        return item.name === "5 CLASSES PASS";
+        if (moreSessions.length >= 3) {
+          return item.name === "5 CLASSES PASS";
+        }else{
+          return item.name === "DROP IN";
+        }
       });
       setYogaPackage(filteredArray);
     }
