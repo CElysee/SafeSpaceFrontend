@@ -36,15 +36,20 @@ function Profile() {
     const fetchUser = async () => {
       try {
         const response = await axiosInstance.get(`/auth/users/${user_id}`);
+        // console.log(response)
         const country_list = await axiosInstance.get("/country/list");
         setUserData(response.data);
+        const country_id = ""
+        if (response.data.country) {
+          const country_id = response.data.country.id
+        }
         setUserValues({
           ...userValues,
           name: response.data.name,
           email: response.data.email,
           phone_number: response.data.phone_number,
           gender: response.data.gender,
-          country_id: response.data.country.id,
+          country_id: country_id,
         });
         setCountryList(country_list.data);
       } catch (error) {
@@ -245,7 +250,7 @@ function Profile() {
                             name="gender"
                             onChange={handleChange}
                           >
-                            <option selected>{userValues.gender}</option>
+                            <option>{userValues.gender}</option>
                             <option>Male</option>
                             <option>Female</option>
                           </select>
@@ -264,8 +269,8 @@ function Profile() {
                             name="country_id"
                             onChange={handleChange}
                           >
-                            {userData && (
-                              <option value={userData.country.id} selected>
+                            {userData.country && (
+                              <option value={userData.country.id}>
                                 {userData.country.name}
                               </option>
                             )}

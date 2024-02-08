@@ -12,7 +12,6 @@ function PaymentConfirmation() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("useEffect is running");
     // Get the current URL
     const queryString = window.location.search;
     // Parse the URL and extract parameters
@@ -24,8 +23,6 @@ function PaymentConfirmation() {
     const transactionToken = urlParams.get("TransactionToken");
     const companyRef = urlParams.get("CompanyRef");
     const pnrID = urlParams.get("PnrID");
-  
-    console.log("Params:", { transId, ccdApproval, transactionToken, companyRef, pnrID });
   
     const updatePaymentStatus = async () => {
       const params = {
@@ -49,7 +46,7 @@ function PaymentConfirmation() {
           config,
         });
         if (response.status === 200) {
-          console.log("Payment status updated successfully");
+          // console.log("Payment status updated successfully");
           navigate("/thank-you");
         }
       } catch (error) {

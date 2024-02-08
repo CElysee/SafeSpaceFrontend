@@ -48,7 +48,7 @@ function Schedules() {
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.length > 1 && transactions.map((transaction, index) => (
+                      {transactions.length > 0 && transactions.map((transaction, index) => (
                         <tr key={index}>
                           <td>{transaction.booking.id}</td>
                           <td>
@@ -63,8 +63,8 @@ function Schedules() {
                           <td>{transaction.booking.billing_city}</td>
                           <td>{transaction.country}</td>
                           <td>{transaction.yoga_session}</td>
-                          <td></td>
-                          <td></td>
+                          <td>{transaction.booking.transaction_amount} Rwf</td>
+                          <td>{transaction.booking.payment_status}</td>
                         </tr>
                       ))}
                     </tbody>

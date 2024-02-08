@@ -550,3 +550,8 @@ label:after {
   font-weight: bold;
   text-align: center;
 }
+.text-danger {
+  --vz-text-opacity: 1;
+  color: rgba(var(--vz-danger-rgb),var(--vz-text-opacity)) !important;
+  
+}

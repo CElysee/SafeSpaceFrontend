@@ -35,7 +35,9 @@ function Planning() {
   const [yogaPackageFilter, setYogaPackageFilter] = useState([]);
   const [yogaPackageId, setYogaPackageId] = useState();
   const [loading, setLoading] = useState(false);
-  const [isNotRegisted, setIsNotRegistred] = useState(false);
+  // const [isNotRegisted, setIsNotRegistred] = useState(false);
+  const [isUserRegistered, setIsUserRegistered] = useState(true);
+  const [showFromReg, setShowFromReg] = useState(false);
   const [yogaLocation, setYogaLocation] = useState("");
   const [showBillingForm, setShowBillingForm] = useState(false);
   const [slot_available, setSlotAvailable] = useState(false);
@@ -164,6 +166,15 @@ function Planning() {
       ...inputValues,
       [name]: value,
     });
+    if (name === "password") {
+      if (value.length <8) {
+        setErrorMessages("Password must be at least 8 characters");
+        setShowFromReg(false);
+      } else {
+        setErrorMessages("");
+        setShowFromReg(true);
+      }
+    }
   };
   const handleDayActive = (index) => {
     setDayActive(index);
@@ -192,19 +203,20 @@ function Planning() {
       setYogaPackage(filteredArray);
     }
   };
-  const isUserRegistered = async () => {
+  const UserRegistered = async () => {
     try {
       const response = await axiosInstance.post("/auth/check_username", {
         email: inputValues.email,
         headers: { "Content-Type": "application/json" },
       });
-      setIsNotRegistred(false);
+      setIsUserRegistered(true);
+      setShowFromReg(true);
       setInputValues({
         ...inputValues,
         names: response.data.data.name,
       });
     } catch (error) {
-      setIsNotRegistred(true);
+      setIsUserRegistered(false);
       console.error("Error while checking user", error);
     }
   };
@@ -218,7 +230,7 @@ function Planning() {
         yoga_session_id: yogaPackageId,
         billing_names: inputValues.names,
         billing_email: inputValues.email,
-        billing_phone_number:inputValues.phone_number,
+        billing_phone_number: inputValues.phone_number,
         billing_address: inputValues.address,
         billing_city: inputValues.city,
         billing_country_id: inputValues.country_id,
@@ -336,7 +348,7 @@ function Planning() {
       const filteredArray = yogaPackageFilter.filter((item) => {
         if (moreSessions.length >= 3) {
           return item.name === "5 CLASSES PASS";
-        }else{
+        } else {
           return item.name === "DROP IN";
         }
       });
@@ -414,7 +426,10 @@ function Planning() {
       >
         <div className="container">
           <div className="row align-items-center gy-4">
-            {days_list.length > 0 && selectedDay.length > 0 && moreSessions && ahead_session.length > 0 ? (
+            {days_list.length > 0 &&
+            selectedDay.length > 0 &&
+            moreSessions &&
+            ahead_session.length > 0 ? (
               <>
                 <div className="col-lg-12">
                   <button
@@ -1088,9 +1103,9 @@ function Planning() {
                                         </div>
                                         <div className="col-lg-6">
                                           <div className="mb-3">
-                                            {isNotRegisted && (
+                                            {isUserRegistered == false && (
                                               <div className="float-end">
-                                                <p className="mb-0 form_paragraph">
+                                                <p className="mb-0 form_paragraph text-danger">
                                                   This email isn't registered
                                                   with us!
                                                 </p>
@@ -1112,13 +1127,14 @@ function Planning() {
                                                 name="email"
                                                 value={inputValues.email}
                                                 onChange={handleInputChange}
-                                                onBlur={isUserRegistered}
+                                                onBlur={UserRegistered}
                                               />
                                             </div>
+                                            
                                           </div>
                                         </div>
                                         <div className="col-lg-6">
-                                          {isNotRegisted && (
+                                          {isUserRegistered == false && (
                                             <div className="mb-3">
                                               <label
                                                 className="form-label form_paragraph"
@@ -1142,6 +1158,7 @@ function Planning() {
                                                   value={inputValues.password}
                                                   onChange={handleInputChange}
                                                 />
+                                                <span className="form_paragraph text-danger">{errorMessages}</span>
                                                 <button
                                                   className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon pt-3"
                                                   type="button"
@@ -1155,199 +1172,215 @@ function Planning() {
                                           )}
                                         </div>
                                       </div>
+                                      {showFromReg && (
+                                        <>
+                                          <div className="row gy-4 mt-2">
+                                            <div className="col-lg-12">
+                                              <div>
+                                                <h4 className="mb-3 fw-semibold">
+                                                  Billing Address
+                                                </h4>
+                                                <div className="row">
+                                                  <div className="col-lg-6">
+                                                    <div className="mb-4">
+                                                      <label
+                                                        htmlFor="address"
+                                                        className="form-label form_paragraph"
+                                                      >
+                                                        Names
+                                                      </label>
+                                                      <input
+                                                        id="address"
+                                                        type="text"
+                                                        className="form-control bg-light border-light"
+                                                        placeholder="Your names*"
+                                                        name="names"
+                                                        value={
+                                                          inputValues.names
+                                                        }
+                                                        onChange={
+                                                          handleInputChange
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                  <div className="col-lg-6">
+                                                    <div className="mb-4">
+                                                      <label
+                                                        htmlFor="PhoneNumber"
+                                                        className="form-label form_paragraph"
+                                                      >
+                                                        Phone Number
+                                                      </label>
+                                                      <input
+                                                        id="PhoneNumber"
+                                                        type="number"
+                                                        className="form-control bg-light border-light"
+                                                        placeholder="07** *** **"
+                                                        name="phone_number"
+                                                        value={
+                                                          inputValues.phone_number
+                                                        }
+                                                        onChange={
+                                                          handleInputChange
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                  <div className="col-lg-6">
+                                                    <div className="mb-4">
+                                                      <label
+                                                        htmlFor="address"
+                                                        className="form-label form_paragraph"
+                                                      >
+                                                        Address
+                                                      </label>
+                                                      <input
+                                                        name="address"
+                                                        id="address"
+                                                        type="text"
+                                                        className="form-control bg-light border-light"
+                                                        placeholder="Your Address*"
+                                                        value={
+                                                          inputValues.address
+                                                        }
+                                                        onChange={
+                                                          handleInputChange
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                  <div className="col-lg-6">
+                                                    <div className="mb-4">
+                                                      <label
+                                                        htmlFor="city"
+                                                        className="form-label form_paragraph"
+                                                      >
+                                                        City
+                                                      </label>
+                                                      <input
+                                                        name="city"
+                                                        id="city"
+                                                        type="text"
+                                                        className="form-control bg-light border-light"
+                                                        placeholder="Your city*"
+                                                        value={inputValues.city}
+                                                        onChange={
+                                                          handleInputChange
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div className="row">
+                                                  <div className="col-lg-6">
+                                                    <div className="mb-4">
+                                                      <label
+                                                        htmlFor="username"
+                                                        className="form-label form_paragraph"
+                                                      >
+                                                        Country
+                                                      </label>
+                                                      <Select
+                                                        name="country_id"
+                                                        className="basic-multi-select"
+                                                        options={countryOptions}
+                                                        // onChange={(e) => setCountry(e.target.value)}
+                                                        onChange={
+                                                          handleCountryChange
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div className="row"></div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div className="row pt-4">
+                                            <div className="col-lg-12">
+                                              <h4 className="mb-3 fw-semibold">
+                                                Payment
+                                              </h4>
+                                              <p className="mb-4 form_paragraph">
+                                                All transactions are secure and
+                                                encrypted.
+                                              </p>
+                                            </div>
+                                            <div className="dpo_pay">
+                                              <div className="col-md-3">
+                                                <p
+                                                  className="form_paragraph"
+                                                  style={{
+                                                    position: "relative",
+                                                    top: "10px",
+                                                  }}
+                                                >
+                                                  DPO Pay
+                                                </p>
+                                              </div>
+                                              <div className="col-md-9">
+                                                <div className="payment_logos">
+                                                  <img
+                                                    alt="visa"
+                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/0169695890db3db16bfe.svg"
+                                                    role="img"
+                                                    width="50"
+                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                  />
+                                                  <img
+                                                    alt="master"
+                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/5e3b05b68f3d31b87e84.svg"
+                                                    role="img"
+                                                    width="50"
+                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                  />
+                                                  <img
+                                                    alt="american express"
+                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/cbbbc36cee664630aa26.svg"
+                                                    role="img"
+                                                    width="50"
+                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                  />
+                                                  <img
+                                                    alt="mpesa"
+                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/b5f5addb942e4e6228c9.svg"
+                                                    role="img"
+                                                    width="38"
+                                                    height="24"
+                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                  />
+                                                  <img
+                                                    alt="mpesa"
+                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/6ae10128cfa7a2f4f9d0.svg"
+                                                    role="img"
+                                                    width="50"
+                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                  />
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
 
-                                      <div className="row gy-4 mt-2">
-                                        <div className="col-lg-12">
-                                          <div>
-                                            <h4 className="mb-3 fw-semibold">
-                                              Billing Address
-                                            </h4>
-                                            <div className="row">
-                                              <div className="col-lg-6">
-                                                <div className="mb-4">
-                                                  <label
-                                                    htmlFor="address"
-                                                    className="form-label form_paragraph"
-                                                  >
-                                                    Names
-                                                  </label>
-                                                  <input
-                                                    id="address"
-                                                    type="text"
-                                                    className="form-control bg-light border-light"
-                                                    placeholder="Your names*"
-                                                    name="names"
-                                                    value={inputValues.names}
-                                                    onChange={handleInputChange}
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className="col-lg-6">
-                                                <div className="mb-4">
-                                                  <label
-                                                    htmlFor="PhoneNumber"
-                                                    className="form-label form_paragraph"
-                                                  >
-                                                    Phone Number
-                                                  </label>
-                                                  <input
-                                                    id="PhoneNumber"
-                                                    type="number"
-                                                    className="form-control bg-light border-light"
-                                                    placeholder="07** *** **"
-                                                    name="phone_number"
-                                                    value={inputValues.phone_number}
-                                                    onChange={handleInputChange}
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className="col-lg-6">
-                                                <div className="mb-4">
-                                                  <label
-                                                    htmlFor="address"
-                                                    className="form-label form_paragraph"
-                                                  >
-                                                    Address
-                                                  </label>
-                                                  <input
-                                                    name="address"
-                                                    id="address"
-                                                    type="text"
-                                                    className="form-control bg-light border-light"
-                                                    placeholder="Your Address*"
-                                                    value={inputValues.address}
-                                                    onChange={handleInputChange}
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className="col-lg-6">
-                                                <div className="mb-4">
-                                                  <label
-                                                    htmlFor="city"
-                                                    className="form-label form_paragraph"
-                                                  >
-                                                    City
-                                                  </label>
-                                                  <input
-                                                    name="city"
-                                                    id="city"
-                                                    type="text"
-                                                    className="form-control bg-light border-light"
-                                                    placeholder="Your city*"
-                                                    value={inputValues.city}
-                                                    onChange={handleInputChange}
-                                                  />
-                                                </div>
-                                              </div>
-                                            </div>
-                                            <div className="row">
-                                              
-                                              <div className="col-lg-6">
-                                                <div className="mb-4">
-                                                  <label
-                                                    htmlFor="username"
-                                                    className="form-label form_paragraph"
-                                                  >
-                                                    Country
-                                                  </label>
-                                                  <Select
-                                                    name="country_id"
-                                                    className="basic-multi-select"
-                                                    options={countryOptions}
-                                                    // onChange={(e) => setCountry(e.target.value)}
-                                                    onChange={
-                                                      handleCountryChange
-                                                    }
-                                                  />
-                                                </div>
-                                              </div>
-                                            </div>
-                                            <div className="row"></div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="row pt-4">
-                                        <div className="col-lg-12">
-                                          <h4 className="mb-3 fw-semibold">
-                                            Payment
-                                          </h4>
-                                          <p className="mb-4 form_paragraph">
-                                            All transactions are secure and
-                                            encrypted.
-                                          </p>
-                                        </div>
-                                        <div className="dpo_pay">
-                                          <div className="col-md-3">
-                                            <p
-                                              className="form_paragraph"
-                                              style={{
-                                                position: "relative",
-                                                top: "10px",
-                                              }}
-                                            >
-                                              DPO Pay
-                                            </p>
-                                          </div>
-                                          <div className="col-md-9">
-                                            <div className="payment_logos">
-                                              <img
-                                                alt="visa"
-                                                src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/0169695890db3db16bfe.svg"
-                                                role="img"
-                                                width="50"
-                                                className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                          <button
+                                            className="btn book_button"
+                                            href="#checkout"
+                                          >
+                                            {loading ? (
+                                              <RiseLoader
+                                                color={color}
+                                                loading={loading}
+                                                cssOverride={override}
+                                                size={10}
+                                                aria-label="Loading Spinner"
+                                                data-testid="loader"
                                               />
-                                              <img
-                                                alt="master"
-                                                src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/5e3b05b68f3d31b87e84.svg"
-                                                role="img"
-                                                width="50"
-                                                className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
-                                              />
-                                              <img
-                                                alt="american express"
-                                                src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/cbbbc36cee664630aa26.svg"
-                                                role="img"
-                                                width="50"
-                                                className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
-                                              />
-                                              <img
-                                                alt="mpesa"
-                                                src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/b5f5addb942e4e6228c9.svg"
-                                                role="img"
-                                                width="38"
-                                                height="24"
-                                                className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
-                                              />
-                                              <img
-                                                alt="mpesa"
-                                                src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/6ae10128cfa7a2f4f9d0.svg"
-                                                role="img"
-                                                width="50"
-                                                className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
-                                              />
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-
-                                      <button
-                                        className="btn book_button"
-                                        href="#checkout"
-                                      >
-                                        {loading ? (
-                                          <RiseLoader
-                                            color={color}
-                                            loading={loading}
-                                            cssOverride={override}
-                                            size={10}
-                                            aria-label="Loading Spinner"
-                                            data-testid="loader"
-                                          />
-                                        ) : (
-                                          "Make payment"
-                                        )}
-                                      </button>
+                                            ) : (
+                                              "Make payment"
+                                            )}
+                                          </button>
+                                        </>
+                                      )}
                                     </div>
                                   </form>
                                 </div>

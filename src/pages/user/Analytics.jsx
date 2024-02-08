@@ -23,6 +23,7 @@ function Analytics() {
         setBookingsNumbers(response.data.count);
         setBookingsSum(response.data.sum);
         setTransactions(bookings.data);
+        console.log(bookings.data);
       } catch (error) {
         console.log(error);
       }
@@ -121,7 +122,7 @@ function Analytics() {
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.length > 1 && transactions.map((transaction, index) => (
+                      {transactions.length > 0 && transactions.map((transaction, index) => (
                         <tr key={index}>
                           <td>{transaction.id}</td>
                           <td>
