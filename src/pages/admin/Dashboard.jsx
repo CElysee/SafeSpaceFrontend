@@ -4,18 +4,23 @@ import Analytics from "../admin/Analytics";
 import Profile from "./Profile";
 import Schedules from "./Schedules";
 import Transaction from "./Transactions";
-import axiosInstance from "../../utils/axiosInstance";
+import { useDispatch } from "react-redux";
+import { logout } from "../../features/auth/authSlice";
 
-function Dashboard(props) {
+
+function Dashboard() {
   const navigate = useNavigate();
-  const [access_token, setAccess_token] = useState("");
-  const [userName, setUserName] = useState("");
+  const dispatch = useDispatch();
+
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("user_role");
-    localStorage.removeItem("user_id");
+    alert("You are about to logout");
+    // localStorage.removeItem("access_token");
+    // localStorage.removeItem("user_role");
+    // localStorage.removeItem("user_id");
+    dispatch(logout());
     navigate("/sign-in");
   };
+
   return (
     <div className="bg-beige pb-5">
       <div className="container">
@@ -160,7 +165,7 @@ function Dashboard(props) {
                         role="tabpanel"
                         aria-labelledby="dashboard-tab"
                       >
-                        <Analytics user_name={userName} />
+                        <Analytics />
                       </div>
 
                       <div

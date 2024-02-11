@@ -5,7 +5,9 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import "react-toastify/dist/ReactToastify.css";
-import "../auth/Auth.css"
+import "../auth/Auth.css";
+import { useDispatch } from "react-redux";
+import { login } from "../../features/auth/authSlice";
 
 const override = {
   display: "block",
@@ -23,6 +25,9 @@ function Login() {
     username: "",
     password: "",
   });
+
+  const dispatch = useDispatch();
+
   const [showPassword, setShowPassword] = useState(false);
   useEffect(() => {
     if (location.state && location.state.message) {
@@ -42,6 +47,7 @@ function Login() {
   };
   const isDisabled =
     inputValue.username.trim() === "" || inputValue.password.trim() === "";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -49,19 +55,26 @@ function Login() {
     const formData = new FormData();
     formData.append("username", inputValue.username);
     formData.append("password", inputValue.password);
-
     try {
       const user_login = await axiosInstance.post("/auth/login", formData, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      notify("Login successful", "success");
+      dispatch(login(user_login.data));
+
+      
       setLoading(false);
       setErrorMessage(false);
+      
       localStorage.setItem("access_token", user_login.data.access_token);
       localStorage.setItem("user_id", user_login.data.userId);
       localStorage.setItem("user_role", user_login.data.role);
+
+      notify("Login successful", "success");
+      
+      
+
       if (user_login.data.role === "admin") {
         navigate("/admin/dashboard");
       } else if (user_login.data.role === "user") {

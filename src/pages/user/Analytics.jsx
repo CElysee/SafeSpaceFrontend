@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import SideMenu from "./SideMenu";
 import axiosInstance from "../../utils/axiosInstance";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../features/auth/authSlice";
 
 function Analytics() {
   const [bookingsNumbers, setBookingsNumbers] = useState("");
@@ -30,6 +32,8 @@ function Analytics() {
     };
     fetchBookings();
   }, []);
+  const authUser = useSelector(selectUser);
+  console.log(authUser);
   // console.log(transactions[0].yoga_session.price);
   return (
     <div className="container">
@@ -37,7 +41,7 @@ function Analytics() {
         <span className="d-flex align-items-center pb-5">
           <span className="text-start ms-xl-2">
             <h5 className="d-none d-xl-inline-block ms-1 fw-semibold user-name-text">
-              Welcome back to your dashboard!
+              {authUser.userData.name}, Welcome back to your dashboard!
             </h5>
           </span>
         </span>
