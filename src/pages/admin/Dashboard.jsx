@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Analytics from "../admin/Analytics";
 import Profile from "./Profile";
-import Schedules from "./Schedules";
+import Sessions from "./Sessions";
 import Transaction from "./Transactions";
-import { useDispatch } from "react-redux";
+import AllUsers from "./AllUsers";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
 
 
@@ -13,10 +14,6 @@ function Dashboard() {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    alert("You are about to logout");
-    // localStorage.removeItem("access_token");
-    // localStorage.removeItem("user_role");
-    // localStorage.removeItem("user_id");
     dispatch(logout());
     navigate("/sign-in");
   };
@@ -61,11 +58,11 @@ function Dashboard() {
                       </a>
                       <a
                         className="nav-link text-bold"
-                        id="profile-tab"
+                        id="allUsers-tab"
                         data-bs-toggle="pill"
-                        href="#profile"
+                        href="#allUsers"
                         role="tab"
-                        aria-controls="profile"
+                        aria-controls="allUsers"
                         aria-selected="false"
                         tabIndex="-1"
                       >
@@ -100,11 +97,11 @@ function Dashboard() {
                       </a>
                       <a
                         className="nav-link text-bold"
-                        id="schedules-tab"
+                        id="sessionCalender-tab"
                         data-bs-toggle="pill"
-                        href="#schedules"
+                        href="#sessionCalender"
                         role="tab"
-                        aria-controls="schedules"
+                        aria-controls="sessionCalender"
                         aria-selected="false"
                         tabIndex="-1"
                       >
@@ -179,11 +176,20 @@ function Dashboard() {
 
                       <div
                         className="tab-pane fade"
+                        id="allUsers"
+                        role="tabpanel"
+                        aria-labelledby="allUsers-tab"
+                      >
+                        <AllUsers />
+                      </div>
+
+                      <div
+                        className="tab-pane fade"
                         id="schedules"
                         role="tabpanel"
                         aria-labelledby="schedules-tab"
                       >
-                        <Schedules />
+                        <Sessions />
                       </div>
                       <div
                         className="tab-pane fade"

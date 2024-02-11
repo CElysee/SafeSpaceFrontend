@@ -40,16 +40,16 @@ function Analytics() {
         <span className="d-flex align-items-center pb-5">
           <span className="text-start ms-xl-2">
             <h5 className="d-none d-xl-inline-block ms-1 fw-semibold user-name-text">
-              {/* {authUser.userData.name}, Welcome back to your dashboard! */}
+              {authUser.userData.name}, Welcome back to your dashboard!
             </h5>
           </span>
         </span>
         <div className="col-md-3">
-          <div className="card card-animate bg-beige">
+          <div className="card card-animate bg-purple">
             <div className="card-body">
               <div className="d-flex align-items-center">
                 <div className="flex-grow-1 overflow-hidden">
-                  <p className="text-uppercase fw-medium text-muted text-truncate mb-0 text-bold">
+                  <p className="text-uppercase fw-medium text-white text-truncate mb-0 text-bold">
                     {" "}
                     Users
                   </p>
@@ -57,7 +57,7 @@ function Analytics() {
               </div>
               <div className="d-flex align-items-end justify-content-between mt-4">
                 <div>
-                  <p className="fs-22 fw-semibold ff-secondary mb-4">
+                  <p className="fs-22 text-white fw-semibold ff-secondary mb-4">
                     <span className="counter-value" data-target="559.25">
                       {bookingsNumbers}
                     </span>
@@ -73,11 +73,11 @@ function Analytics() {
           </div>
         </div>
         <div className="col-md-3">
-          <div className="card card-animate bg-beige">
+          <div className="card card-animate bg-purple">
             <div className="card-body">
               <div className="d-flex align-items-center">
                 <div className="flex-grow-1 overflow-hidden">
-                  <p className="text-uppercase fw-medium text-muted text-truncate mb-0 text-bold">
+                  <p className="text-uppercase fw-medium text-white text-truncate mb-0 text-bold">
                     {" "}
                     All Bookings
                   </p>
@@ -85,7 +85,7 @@ function Analytics() {
               </div>
               <div className="d-flex align-items-end justify-content-between mt-4">
                 <div>
-                  <p className="fs-22 fw-semibold ff-secondary mb-4">
+                  <p className="fs-22 fw-semibold text-white ff-secondary mb-4">
                     <span className="counter-value" data-target="559.25">
                       {bookingsNumbers}
                     </span>
@@ -101,11 +101,11 @@ function Analytics() {
           </div>
         </div>
         <div className="col-md-3">
-          <div className="card card-animate bg-beige">
+          <div className="card card-animate bg-purple">
             <div className="card-body">
               <div className="d-flex align-items-center">
                 <div className="flex-grow-1 overflow-hidden">
-                  <p className="text-uppercase fw-medium text-muted text-truncate mb-0 text-bold">
+                  <p className="text-uppercase fw-medium text-white text-truncate mb-0 text-bold">
                     {" "}
                     Pending Bookings
                   </p>
@@ -113,7 +113,7 @@ function Analytics() {
               </div>
               <div className="d-flex align-items-end justify-content-between mt-4">
                 <div>
-                  <p className="fs-22 fw-semibold ff-secondary mb-4">
+                  <p className="fs-22 fw-semibold text-white ff-secondary mb-4">
                     <span className="counter-value" data-target="559.25">
                       {bookingsNumbers}
                     </span>
@@ -129,11 +129,11 @@ function Analytics() {
           </div>
         </div>
         <div className="col-md-3">
-          <div className="card card-animate bg-beige">
+          <div className="card card-animate bg-purple">
             <div className="card-body">
               <div className="d-flex align-items-center">
                 <div className="flex-grow-1 overflow-hidden">
-                  <p className="text-uppercase fw-medium text-muted text-truncate mb-0 text-bold">
+                  <p className="text-uppercase fw-medium text-white text-truncate mb-0 text-bold">
                     {" "}
                     Transactions
                   </p>
@@ -141,7 +141,7 @@ function Analytics() {
               </div>
               <div className="d-flex align-items-end justify-content-between mt-4">
                 <div>
-                  <p className="fs-22 fw-semibold ff-secondary mb-4">
+                  <p className="fs-22 fw-semibold text-white ff-secondary mb-4">
                     <span className="counter-value" data-target="559.25">
                       {bookingsSum}
                     </span>
@@ -157,11 +157,10 @@ function Analytics() {
             </div>
           </div>
         </div>
-        <div className="row mx-auto">
-          <div className="col-md-12">
-            <div className="card">
-              <div className="card-header align-items-center d-flex bg-beige">
-                <p className="card-title mb-0 flex-grow-1 text-bold">
+        <div className="mx-auto">
+        <div className="card">
+              <div className="card-header align-items-center d-flex bg-purple">
+                <p className="card-title mb-0 text-white flex-grow-1 text-bold">
                   Recent Orders
                 </p>
               </div>
@@ -219,7 +218,6 @@ function Analytics() {
                 </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>

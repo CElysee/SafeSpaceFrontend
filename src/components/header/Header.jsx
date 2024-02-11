@@ -1,43 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utils/axiosInstance";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated } from "../../features/auth/authSlice";
 
-function Header(props) {
+function Header() {
   const year = new Date().getFullYear();
-  const [access_token, setAccess_token] = useState("");
-  const [userId, setUserId] = useState("");
-  const [userName, setUserName] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const access_token_user = localStorage.getItem("access_token");
-    if (access_token_user) {
-      setIsLoggedIn(true);
-      // const getUser = async () => {
-      //   try {
-      //     const response = await axiosInstance.get("auth/users/me", {
-      //       headers: {
-      //         Accept: "application/json",
-      //         Authorization: `Bearer ${access_token}`,
-      //       },
-      //     });
-      //     setUserName(response.data.name);
-      //   } catch (error) {
-      //     if (error.response.status === 401 || error.response.status === 406) {
-      //       navigate("/sign-in");
-      //     }
-      //     console.log(error);
-      //   }
-      // };
-      // getUser();
-    }
-    // Check if user_id exists in localStorage
-    setUserId(localStorage.getItem("user_id"));
-    setAccess_token(localStorage.getItem("access_token"));
-  }, []);
-
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   return (
     <div>
       <nav
@@ -88,9 +55,7 @@ function Header(props) {
                   <i className="ri-arrow-down-s-fill align-middle ms-1"></i>
                 </a>
                 <div className="dropdown-content bg-beige">
-                  <a href="https://safespaceyoga.rw/the-space/">
-                    Our values
-                  </a>
+                  <a href="https://safespaceyoga.rw/the-space/">Our values</a>
                   <a href="https://safespaceyoga.rw/about/#meet_the_founder">
                     Meet our founder
                   </a>
@@ -102,15 +67,9 @@ function Header(props) {
                   <i className="ri-arrow-down-s-fill align-middle ms-1"></i>
                 </a>
                 <div className="dropdown-content bg-beige">
-                  <a href="https://safespaceyoga.rw/hatha-yoga/">
-                    Hatha Yoga
-                  </a>
-                  <a href="https://safespaceyoga.rw/sadhana/">
-                    Sadhana
-                  </a>
-                  <a href="https://safespaceyoga.rw/hatha-flow/">
-                    Hatha Flow
-                  </a>
+                  <a href="https://safespaceyoga.rw/hatha-yoga/">Hatha Yoga</a>
+                  <a href="https://safespaceyoga.rw/sadhana/">Sadhana</a>
+                  <a href="https://safespaceyoga.rw/hatha-flow/">Hatha Flow</a>
                 </div>
               </li>
               <li className="nav-item">
@@ -138,22 +97,18 @@ function Header(props) {
                 </Link>
               </li>
             </ul>
-            {isLoggedIn ? (
-              ""
-            ) : (
-              <>
-                <div className="">
-                  <Link
-                    to="/sign-in"
-                    className="btn btn-link fw-medium text-decoration-none text-body"
-                  >
-                    Sign in
-                  </Link>
-                  <Link to="/sign-up" className="btn btn-primary">
-                    Sign Up
-                  </Link>
-                </div>
-              </>
+            {isAuthenticated ? null : (
+              <div className="">
+                <Link
+                  to="/sign-in"
+                  className="btn btn-link fw-medium text-decoration-none text-body"
+                >
+                  Sign in
+                </Link>
+                <Link to="/sign-up" className="btn btn-primary">
+                  Sign Up
+                </Link>
+              </div>
             )}
           </div>
         </div>

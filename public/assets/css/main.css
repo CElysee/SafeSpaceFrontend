@@ -3798,10 +3798,13 @@ input[type="submit"].btn-block {
   border: 0;
   border-radius: 0.25rem;
 }
+.custom-verti-nav-pills .nav-link{
+  background-color: #c2b1d2 !important;  
+}
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #3db07a;
+  color: #d45700 !important;
+  background-color: #fff !important;
 }
 .nav-fill .nav-item,
 .nav-fill > .nav-link {
@@ -5934,6 +5937,9 @@ button.bg-dark:focus,
 button.bg-dark:hover {
   background-color: #1d2124 !important;
 }
+.bg-purple{
+  background-color: #c2b1d2 !important;
+} 
 .bg-white {
   background-color: #fff !important;
 }
@@ -8846,6 +8852,9 @@ a.text-dark:hover {
 }
 .text-muted {
   color: #6c757d !important;
+}
+.text-white {
+  color: #fff !important;
 }
 .text-black-50 {
   color: rgba(0, 0, 0, 0.5) !important;

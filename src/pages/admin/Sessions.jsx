@@ -1,34 +1,29 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 
-function Schedules() {
+function Sessions() {
   const [userId, setUserId] = useState("");
-  const [transactions, setTransactions] = useState([]);
+  const [allSessions, setAllSessions] = useState([]);
 
   useEffect(() => {
-    const user_id = localStorage.getItem("user_id");
-    setUserId(user_id);
-    // fetchBookings();
-    const fetchBookings = async () => {
+    const fetchSessions = async () => {
       try {
-        const bookings = await axiosInstance.get(
-          `/yoga_class_booking/user_bookings?user_id=${user_id}`
-        );
-        setTransactions(bookings.data);
+        const response = await axiosInstance.get("/yoga_class_booking/list");
+        setAllSessions(response.data);
       } catch (error) {
-        console.log(error);
+        console.log("Fetching sessions error:", error);
       }
-    };
-    fetchBookings();
+    }
+    fetchSessions();
   }, []);
   return (
     <div className="container">
       <div className="row mx-auto">
           <div className="col-md-12">
             <div className="card">
-              <div className="card-header align-items-center d-flex bg-beige">
-                <p className="card-title mb-0 flex-grow-1 text-bold">
-                 All schedules
+              <div className="card-header align-items-center d-flex bg-purple">
+                <p className="card-title text-white mb-0 flex-grow-1 text-bold">
+                 All sessions
                 </p>
               </div>
               <div className="card-body paragraph">
@@ -41,12 +36,12 @@ function Schedules() {
                         <th scope="col">Yoga Class</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Payment Status</th>
-                        <th scope="col">Booking status</th>
+                        <th scope="col">Session time</th>
                         <th scope="col">Starting Date</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.length > 1 && transactions.map((transaction, index) => (
+                      {allSessions.length > 0 && allSessions.map((transaction, index) => (
                         <tr key={index}>
                           <td>{transaction.id}</td>
                           <td>
@@ -69,7 +64,7 @@ function Schedules() {
                           </td>
                           <td>
                             <span className="badge bg-beige text-dark">
-                              {transaction.booking.booking_status}
+                              {transaction.booking.booking_slot_time}
                             </span>
                           </td>
                           <td>
@@ -90,4 +85,4 @@ function Schedules() {
   );
 }
 
-export default Schedules;
+export default Sessions;

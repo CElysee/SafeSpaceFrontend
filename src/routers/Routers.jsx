@@ -22,26 +22,39 @@ function Routers() {
       <Route path="/PaymentConfirmation" element={<PaymentConfirmation />} />
 
       {/* User Routes */}
+      {/* <Route path="/user/*" element="">
+        <Route
+          path="dashboard"
+          element={
+            <PrivateRoutes>
+              <Dashboard />
+            </PrivateRoutes>
+          }
+        />
+      </Route> */}
 
       <Route
-        path="/user/*"
+        path="/user/dashboard"
         element={
           <PrivateRoutes>
-            <Route path="dashboard" element={<Dashboard />} />
+            <Dashboard />
           </PrivateRoutes>
         }
-      ></Route>
+      />
 
       {/* Admin Routes */}
-
       <Route
-        path="/admin/*"
+        path="/admin/dashboard"
         element={
           <PrivateRoutes>
-            <Route path="dashboard" element={<AdminDashboard />} />
+            <AdminDashboard />
           </PrivateRoutes>
         }
-      ></Route>
+      />
+
+      {/* <Route path="/admin/*" element="">
+        <Route path="dashboard" element={<AdminDashboard />} />
+      </Route> */}
     </Routes>
   );
 }

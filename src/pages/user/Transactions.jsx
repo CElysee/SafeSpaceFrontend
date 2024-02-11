@@ -26,8 +26,8 @@ function Schedules() {
       <div className="row mx-auto">
           <div className="col-md-12">
             <div className="card">
-              <div className="card-header align-items-center d-flex bg-beige">
-                <p className="card-title mb-0 flex-grow-1 text-bold">
+              <div className="card-header align-items-center d-flex bg-purple">
+                <p className="card-title mb-0 text-white flex-grow-1 text-bold">
                  All schedules
                 </p>
               </div>

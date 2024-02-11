@@ -153,7 +153,7 @@ function Profile() {
       <div className="row mx-auto">
         <div className="col-md-12">
           <div className="card">
-            <div className="card-header bg-beige">
+            <div className="card-header bg-white">
               <ul
                 className="nav nav-tabs-custom rounded card-header-tabs border-bottom-0 pt-2"
                 role="tablist"
