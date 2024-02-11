@@ -6,27 +6,18 @@ import { selectUser } from "../../features/auth/authSlice";
 
 function Analytics() {
   const [bookingsNumbers, setBookingsNumbers] = useState("");
-  const [bookingsSum, setBookingsSum] = useState("");
-  const [userId, setUserId] = useState("");
-  const [transactions, setTransactions] = useState([]);
+  const [allSessions, setAllSessions] = useState([]);
 
   const authUser = useSelector(selectUser);
-  
+
   useEffect(() => {
-    const user_id = localStorage.getItem("user_id");
-    setUserId(user_id);
     // fetchBookings();
     const fetchBookings = async () => {
       try {
-        const response = await axiosInstance.get(
-          `/membership_bookings/count/${user_id}`
-        );
-        const bookings = await axiosInstance.get(
-          `/yoga_class_booking/user_bookings?user_id=${user_id}`
-        );
-        setBookingsNumbers(response.data.count);
-        setBookingsSum(response.data.sum);
-        setTransactions(bookings.data);
+        const dashboard_counts = await axiosInstance.get("/membership_bookings/admin_count/");
+        const allSession = await axiosInstance.get("/yoga_class_booking/list");
+        setAllSessions(allSession.data);
+        setBookingsNumbers(dashboard_counts.data);
       } catch (error) {
         console.log(error);
       }
@@ -59,7 +50,7 @@ function Analytics() {
                 <div>
                   <p className="fs-22 text-white fw-semibold ff-secondary mb-4">
                     <span className="counter-value" data-target="559.25">
-                      {bookingsNumbers}
+                      {bookingsNumbers.all_users}
                     </span>
                   </p>
                 </div>
@@ -87,7 +78,7 @@ function Analytics() {
                 <div>
                   <p className="fs-22 fw-semibold text-white ff-secondary mb-4">
                     <span className="counter-value" data-target="559.25">
-                      {bookingsNumbers}
+                    {bookingsNumbers.all_transactions}
                     </span>
                   </p>
                 </div>
@@ -107,7 +98,7 @@ function Analytics() {
                 <div className="flex-grow-1 overflow-hidden">
                   <p className="text-uppercase fw-medium text-white text-truncate mb-0 text-bold">
                     {" "}
-                    Pending Bookings
+                    All transactions
                   </p>
                 </div>
               </div>
@@ -115,7 +106,7 @@ function Analytics() {
                 <div>
                   <p className="fs-22 fw-semibold text-white ff-secondary mb-4">
                     <span className="counter-value" data-target="559.25">
-                      {bookingsNumbers}
+                    {bookingsNumbers.all_transactions}
                     </span>
                   </p>
                 </div>
@@ -143,7 +134,7 @@ function Analytics() {
                 <div>
                   <p className="fs-22 fw-semibold text-white ff-secondary mb-4">
                     <span className="counter-value" data-target="559.25">
-                      {bookingsSum}
+                    {bookingsNumbers.total_amount_transaction}
                     </span>
                     Rwf
                   </p>
@@ -158,29 +149,30 @@ function Analytics() {
           </div>
         </div>
         <div className="mx-auto">
-        <div className="card">
-              <div className="card-header align-items-center d-flex bg-purple">
-                <p className="card-title mb-0 text-white flex-grow-1 text-bold">
-                  Recent Orders
-                </p>
-              </div>
+          <div className="card">
+            <div className="card-header align-items-center d-flex bg-purple">
+              <p className="card-title mb-0 text-white flex-grow-1 text-bold">
+                Recent sessions
+              </p>
+            </div>
 
-              <div className="card-body paragraph">
-                <div className="table-responsive">
-                  <table className="table table-borderless mb-0">
-                    <thead className="text-muted table-light">
-                      <tr>
-                        <th scope="col">Order ID</th>
-                        <th scope="col">Customer Names</th>
-                        <th scope="col">Yoga Class</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Payment Status</th>
-                        <th scope="col">Booking status</th>
-                        <th scope="col">Starting Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {transactions.length > 1 && transactions.map((transaction, index) => (
+            <div className="card-body paragraph">
+              <div className="table-responsive">
+                <table className="table table-borderless mb-0">
+                  <thead className="text-muted table-light">
+                    <tr>
+                      <th scope="col">Order ID</th>
+                      <th scope="col">Customer Names</th>
+                      <th scope="col">Yoga Class</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Payment Status</th>
+                      <th scope="col">Booking status</th>
+                      <th scope="col">Starting Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allSessions.length > 0 &&
+                      allSessions.map((transaction, index) => (
                         <tr key={index}>
                           <td>{transaction.id}</td>
                           <td>
@@ -203,21 +195,21 @@ function Analytics() {
                           </td>
                           <td>
                             <span className="badge bg-beige text-dark">
-                              {transaction.booking.booking_status}
+                              {transaction.booking.booking_slot_time}
                             </span>
                           </td>
                           <td>
                             <span className="badge bg-beige text-dark">
-                            {transaction.booking.booking_date}
+                              {transaction.booking.booking_date}
                             </span>
                           </td>
                         </tr>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
+                  </tbody>
+                </table>
               </div>
             </div>
+          </div>
         </div>
       </div>
     </div>

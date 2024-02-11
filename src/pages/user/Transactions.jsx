@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../features/auth/authSlice";
 
 function Schedules() {
-  const [userId, setUserId] = useState("");
   const [transactions, setTransactions] = useState([]);
-
+  const authUser = useSelector(selectUser);
   useEffect(() => {
-    const user_id = localStorage.getItem("user_id");
-    setUserId(user_id);
+    const user_id = authUser.userData.id;
     // fetchBookings();
     const fetchBookings = async () => {
       try {

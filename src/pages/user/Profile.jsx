@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import axiosInstance from "../../utils/axiosInstance";
 import { ToastContainer, toast } from "react-toastify";
 import RiseLoader from "react-spinners/RiseLoader";
 import "react-toastify/dist/ReactToastify.css";
+import { selectUser } from "../../features/auth/authSlice";
 
 
 const override = {
@@ -31,8 +33,9 @@ function Profile() {
     new_password: "",
     confirm_password: "",
   });
+  const authUser = useSelector(selectUser);
   useEffect(() => {
-    const user_id = localStorage.getItem("user_id");
+    const user_id = authUser.userData.id;
     const fetchUser = async () => {
       try {
         const response = await axiosInstance.get(`/auth/users/${user_id}`);

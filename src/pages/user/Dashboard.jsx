@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Analytics from "./Analytics";
 import Profile from "./Profile";
-import Schedules from "./Schedules";
+import Sessions from "./Sessions";
 import Transaction from "./Transactions";
 import axiosInstance from "../../utils/axiosInstance";
 import { useDispatch } from "react-redux";
@@ -10,9 +10,6 @@ import { logout } from "../../features/auth/authSlice";
 
 function Dashboard(props) {
   const navigate = useNavigate();
-  const [access_token, setAccess_token] = useState("");
-  const [userName, setUserName] = useState("");
-
   const dispatch = useDispatch();
   
   const handleLogout = () => {
@@ -140,7 +137,7 @@ function Dashboard(props) {
                       role="tabpanel"
                       aria-labelledby="dashboard-tab"
                     >
-                      <Analytics user_name={userName} />
+                      <Analytics />
                     </div>
 
                     <div
@@ -158,7 +155,7 @@ function Dashboard(props) {
                       role="tabpanel"
                       aria-labelledby="schedules-tab"
                     >
-                      <Schedules />
+                      <Sessions />
                     </div>
                     <div
                       className="tab-pane fade"

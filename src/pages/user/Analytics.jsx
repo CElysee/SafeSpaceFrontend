@@ -9,9 +9,10 @@ function Analytics() {
   const [bookingsSum, setBookingsSum] = useState("");
   const [userId, setUserId] = useState("");
   const [transactions, setTransactions] = useState([]);
+  const authUser = useSelector(selectUser);
 
   useEffect(() => {
-    const user_id = localStorage.getItem("user_id");
+    const user_id = authUser.userData.id;
     setUserId(user_id);
     // fetchBookings();
     const fetchBookings = async () => {
@@ -32,9 +33,6 @@ function Analytics() {
     };
     fetchBookings();
   }, []);
-  const authUser = useSelector(selectUser);
-  console.log(authUser);
-  // console.log(transactions[0].yoga_session.price);
   return (
     <div className="container">
       <div className="row mx-auto">
