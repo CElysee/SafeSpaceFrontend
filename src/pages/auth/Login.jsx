@@ -62,19 +62,14 @@ function Login() {
         },
       });
       dispatch(login(user_login.data));
-
       
       setLoading(false);
       setErrorMessage(false);
       
       localStorage.setItem("access_token", user_login.data.access_token);
-      localStorage.setItem("user_id", user_login.data.userId);
-      localStorage.setItem("user_role", user_login.data.role);
-
+      // localStorage.setItem("user_id", user_login.data.userId);
+      // localStorage.setItem("user_role", user_login.data.role);
       notify("Login successful", "success");
-      
-      
-
       if (user_login.data.role === "admin") {
         navigate("/admin/dashboard");
       } else if (user_login.data.role === "user") {

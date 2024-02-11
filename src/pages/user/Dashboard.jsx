@@ -18,8 +18,8 @@ function Dashboard(props) {
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("access_token");
-    localStorage.removeItem("user_role");
-    localStorage.removeItem("user_id");
+    // localStorage.removeItem("user_role");
+    // localStorage.removeItem("user_id");
     navigate("/sign-in");
   };
   return (

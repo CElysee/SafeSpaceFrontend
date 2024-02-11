@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Analytics from "../admin/Analytics";
 import Profile from "./Profile";
 import Sessions from "./Sessions";
 import Transaction from "./Transactions";
 import AllUsers from "./AllUsers";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
 
 
@@ -15,6 +14,7 @@ function Dashboard() {
 
   const handleLogout = () => {
     dispatch(logout());
+    localStorage.removeItem("access_token");
     navigate("/sign-in");
   };
 
