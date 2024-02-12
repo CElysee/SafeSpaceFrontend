@@ -174,7 +174,7 @@ function Analytics() {
                     {allSessions.length > 0 &&
                       allSessions.map((transaction, index) => (
                         <tr key={index}>
-                          <td>{transaction.id}</td>
+                          <td>{transaction.booking.transaction_ref}</td>
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="flex-grow-1">

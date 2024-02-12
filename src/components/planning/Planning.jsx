@@ -224,6 +224,7 @@ function Planning() {
     e.preventDefault();
     setLoading(true);
     const jsonFormattedData = JSON.stringify(moreSessions);
+    const randomStringRef = Math.random().toString(36).slice(2)
     try {
       const params = {
         password: inputValues.password,
@@ -240,6 +241,7 @@ function Planning() {
         booking_slot_number: inputValues.booking_slot_number,
         booking_more_sessions: moreSessions,
         payment_package_id: yogaPackageId,
+        session_ref: randomStringRef
       };
       // console.log(params);
       const config = {
@@ -248,18 +250,14 @@ function Planning() {
           "Content-Type": "application/json",
         },
       };
-      // console.log(params);
       const submitPayment = await axiosInstance.post(
         "/yoga_class_booking/create",
         params,
         config
       );
-      console.log(submitPayment);
       setLoading(false);
-      // console.log(params)
       window.location.href = submitPayment.data.redirection_url;
       navigate(submitPayment.data.redirection_url);
-      // navigate("/thank-you");
     } catch (error) {
       console.error("Error making a payment", error);
       setLoading(false);

@@ -4,19 +4,16 @@ import Analytics from "./Analytics";
 import Profile from "./Profile";
 import Sessions from "./Sessions";
 import Transaction from "./Transactions";
-import axiosInstance from "../../utils/axiosInstance";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
 
-function Dashboard(props) {
+function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("access_token");
-    // localStorage.removeItem("user_role");
-    // localStorage.removeItem("user_id");
     navigate("/sign-in");
   };
   return (
