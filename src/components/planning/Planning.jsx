@@ -65,6 +65,8 @@ function Planning() {
     payment_package_id: "",
   });
 
+  const uppercaseWords = (str) => str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
+
   useEffect(() => {
     const today = new Date();
     const currentDay = today.getDay();
@@ -229,11 +231,11 @@ function Planning() {
       const params = {
         password: inputValues.password,
         yoga_session_id: yogaPackageId,
-        billing_names: inputValues.names,
+        billing_names: uppercaseWords(inputValues.names),
         billing_email: inputValues.email,
         billing_phone_number: inputValues.phone_number,
-        billing_address: inputValues.address,
-        billing_city: inputValues.city,
+        billing_address: uppercaseWords(inputValues.address),
+        billing_city: uppercaseWords(inputValues.city),
         billing_country_id: inputValues.country_id,
         yoga_class_location_id: selectedDay[session_id].location,
         booking_date: days_list[dayActive].days,
