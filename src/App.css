@@ -185,3 +185,10 @@ form p.text-danger {
   margin: auto;
   display: table;
 }
+.page_404{
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { DayPicker } from "react-day-picker";
-import "../planning/Planning.css";
+import "./Schedules.css";
 import axiosInstance from "../../utils/axiosInstance";
 import Select from "react-select";
 import RiseLoader from "react-spinners/RiseLoader";
 import "react-toastify/dist/ReactToastify.css";
 import "../membershipInfo/MembershipInfo.css";
-import { ToastContainer, toast } from "react-toastify";
 import ContentLoader from "react-content-loader";
 import { set } from "date-fns";
-import axios from "axios";
 
 const override = {
   display: "block",
@@ -19,7 +17,7 @@ const override = {
   paddingRight: "10px",
 };
 
-function Planning() {
+function Schedules() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [country, setCountry] = useState("");
@@ -40,14 +38,17 @@ function Planning() {
   const [showFromReg, setShowFromReg] = useState(false);
   const [yogaLocation, setYogaLocation] = useState("");
   const [showBillingForm, setShowBillingForm] = useState(false);
-  const [slot_available, setSlotAvailable] = useState(false);
+  const [slotAvailable, setSlotAvailable] = useState(false);
   const [available_time, setAvailableTime] = useState([]);
   const [showBookButton, setShowBookButton] = useState(true);
   const [moreSessions, setMoreSessions] = useState([]);
   const [resetMoreSessions, setResetMoreSessions] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [showContinueButton, setShowContinueButton] = useState(true);
   const [disableBookMore, setDisableBookMore] = useState(false);
+  const [remainingCreditClasses, setRemainingCreditClasses] = useState(0);
+  const [number_of_sessions, setNumberOfSessions] = useState(1);
   const [inputValues, setInputValues] = useState({
     email: "",
     names: "",
@@ -65,8 +66,8 @@ function Planning() {
     payment_package_id: "",
   });
 
-  const uppercaseWords = (str) => str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
-
+  const uppercaseWords = (str) =>
+    str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
   useEffect(() => {
     const today = new Date();
     const currentDay = today.getDay();
@@ -97,14 +98,8 @@ function Planning() {
           "/yoga_class_location/list",
           {}
         );
-        const ahead_session = await axiosInstance.get(
-          "/planningsession_weekly_list",
-          {}
-        );
         setCountry(country_response.data);
         setYogaLocation(yoga_location.data);
-        setAheadSession(ahead_session.data);
-        setResetMoreSessions(ahead_session.data);
         setMoreSessions([]);
         setErrorMessages("");
       } catch (error) {
@@ -169,14 +164,18 @@ function Planning() {
       [name]: value,
     });
     if (name === "password") {
-      if (value.length <8) {
+      if (value.length < 8) {
         setErrorMessages("Password must be at least 8 characters");
         setShowFromReg(false);
+        setShowContinueButton(false);
       } else {
         setErrorMessages("");
         setShowFromReg(true);
+        setShowContinueButton(false);
       }
     }
+    // const totalSessions = moreSessions.length + number_of_sessions;
+    // setNumberOfSessions(totalSessions);
   };
   const handleDayActive = (index) => {
     setDayActive(index);
@@ -187,7 +186,7 @@ function Planning() {
     setDisableBookMore(false);
     setErrorMessages("");
   };
-  const handleSession_id = (id) => {
+  const handleSession_id = async (id) => {
     setSession_id(id);
     if (selectedDay[id].name !== "Sadhana - Kigali Wellness Hub") {
       const filteredArray = yogaPackageFilter.filter((item) => {
@@ -204,11 +203,31 @@ function Planning() {
       });
       setYogaPackage(filteredArray);
     }
+    try {
+      const check_spot_data =
+        "yoga_session_name=" +
+        selectedDay[id].name +
+        "&booking_date=" +
+        days_list[dayActive].days;
+      const response = await axiosInstance.get(
+        `yoga_class_booking/spot_available?${check_spot_data}`
+      );
+      const ahead_session = await axiosInstance.get(
+        `/planning/session_weekly_list?yoga_session_name=${selectedDay[id].name}`,
+        {}
+      );
+      setAheadSession(ahead_session.data);
+      setResetMoreSessions(ahead_session.data);
+      setSlotAvailable(response.data);
+    } catch (error) {
+      console.error("Error fetching session spot available", error);
+    }
   };
   const UserRegistered = async () => {
     try {
       const response = await axiosInstance.post("/auth/check_username", {
         email: inputValues.email,
+        session_name: selectedDay[session_id].name,
         headers: { "Content-Type": "application/json" },
       });
       setIsUserRegistered(true);
@@ -216,55 +235,17 @@ function Planning() {
       setInputValues({
         ...inputValues,
         names: response.data.data.name,
+        phone_number: response.data.data.phone_number,
       });
+      setRemainingCreditClasses(response.data.data.credits);
+      setShowContinueButton(false);
     } catch (error) {
       setIsUserRegistered(false);
       console.error("Error while checking user", error);
+      setShowFromReg(false);
     }
   };
-  const makePayment = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const jsonFormattedData = JSON.stringify(moreSessions);
-    const randomStringRef = Math.random().toString(36).slice(2)
-    try {
-      const params = {
-        password: inputValues.password,
-        yoga_session_id: yogaPackageId,
-        billing_names: uppercaseWords(inputValues.names),
-        billing_email: inputValues.email,
-        billing_phone_number: inputValues.phone_number,
-        billing_address: uppercaseWords(inputValues.address),
-        billing_city: uppercaseWords(inputValues.city),
-        billing_country_id: inputValues.country_id,
-        yoga_class_location_id: selectedDay[session_id].location,
-        booking_date: days_list[dayActive].days,
-        booking_slot_time: selectedDay[session_id].time,
-        booking_slot_number: inputValues.booking_slot_number,
-        booking_more_sessions: moreSessions,
-        payment_package_id: yogaPackageId,
-        session_ref: randomStringRef
-      };
-      // console.log(params);
-      const config = {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      };
-      const submitPayment = await axiosInstance.post(
-        "/yoga_class_booking/create",
-        params,
-        config
-      );
-      setLoading(false);
-      window.location.href = submitPayment.data.redirection_url;
-      navigate(submitPayment.data.redirection_url);
-    } catch (error) {
-      console.error("Error making a payment", error);
-      setLoading(false);
-    }
-  };
+
   const showBillingSection = () => {
     setShowBillingForm(true);
     setShowBookButton(false);
@@ -298,7 +279,7 @@ function Planning() {
     // Calculate last week's Sunday date
     const lastWeekSunday = new Date(formattedDate);
     lastWeekSunday.setDate(today.getDate() - currentDay - 7);
-    console.log(lastWeekSunday);
+    // console.log(lastWeekSunday);
     setStartDate(lastWeekSunday.toISOString().split("T")[0]); // Format as YYYY-MM-DD
     const formattedStartDate = lastWeekSunday.toLocaleDateString("en-US", {
       weekday: "short",
@@ -317,11 +298,10 @@ function Planning() {
     setEndDate(formattedEndDate);
   };
   const handleBookMoreSessions = (index) => {
-    // Remove the selected date from the source array
     const movedDate = ahead_session[index];
-    const updatedSourceDates = ahead_session.filter((date, i) => i !== index);
-    setAheadSession(updatedSourceDates);
-    setMoreSessions([...moreSessions, movedDate]);
+    // console.log(moreSessions);
+    setAheadSession((prevDates) => prevDates.filter((date, i) => i !== index));
+    setMoreSessions((prevSessions) => [...prevSessions, movedDate]);
     if (
       selectedDay[session_id].name == "Sadhana - Kigali Wellness Hub" &&
       moreSessions.length >= 2
@@ -332,8 +312,7 @@ function Planning() {
         return item.name === "SADHANA 4 CLASSES PASS";
       });
       setYogaPackage(filteredArray);
-    }
-    if (
+    } else if (
       moreSessions.length >= 4 &&
       selectedDay[session_id].name !== "Sadhana - Kigali Wellness Hub"
     ) {
@@ -354,6 +333,8 @@ function Planning() {
       });
       setYogaPackage(filteredArray);
     }
+    const totalSessions = number_of_sessions + 1;
+    setNumberOfSessions(totalSessions);
   };
   const removeBookMoreSessions = (index) => {
     // Remove the selected date from the source array
@@ -381,6 +362,67 @@ function Planning() {
         return item.name !== "SADHANA 4 CLASSES PASS";
       });
       setYogaPackage(filteredArray);
+    }
+    const totalDeductedSessions = number_of_sessions - 1;
+    setNumberOfSessions(totalDeductedSessions);
+  };
+  const makePayment = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const randomStringRef = Math.random().toString(36).slice(2);
+    const booking_more_sessions_date = moreSessions.map(
+      (session) => session.date
+    );
+    try {
+      const params = {
+        password: inputValues.password,
+        yoga_session_id: yogaPackageId,
+        billing_names: uppercaseWords(inputValues.names),
+        billing_email: inputValues.email,
+        billing_phone_number: inputValues.phone_number,
+        billing_address: uppercaseWords(inputValues.address),
+        billing_city: uppercaseWords(inputValues.city),
+        billing_country_id: inputValues.country_id,
+        yoga_class_location_id: selectedDay[session_id].location,
+        booking_date: days_list[dayActive].days,
+        booking_slot_time: selectedDay[session_id].time,
+        booking_slot_number: inputValues.booking_slot_number,
+        booking_more_sessions: booking_more_sessions_date,
+        payment_package_id: yogaPackageId,
+        session_ref: randomStringRef,
+        yoga_session_name: selectedDay[session_id].name,
+      };
+      // console.log(number_of_sessions);
+      const config = {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      };
+      if (remainingCreditClasses >= number_of_sessions) {
+        const submitPayment = await axiosInstance.post(
+          "/yoga_class_booking/createUsingCredits",
+          params,
+          config
+        );
+        console.log(submitPayment);
+        navigate("/thank-you");
+        setLoading(false);
+        setMoreSessions([]);
+      } else {
+        const submitPayment = await axiosInstance.post(
+          "/yoga_class_booking/create",
+          params,
+          config
+        );
+        // console.log(submitPayment);
+        window.location.href = submitPayment.data.redirection_url;
+        setLoading(false);
+        setMoreSessions([]);
+      }
+    } catch (error) {
+      console.error("Error making a payment", error);
+      setLoading(false);
     }
   };
   return (
@@ -426,10 +468,7 @@ function Planning() {
       >
         <div className="container">
           <div className="row align-items-center gy-4">
-            {days_list.length > 0 &&
-            selectedDay.length > 0 &&
-            moreSessions &&
-            ahead_session.length > 0 ? (
+            {days_list.length > 0 && selectedDay.length > 0 && moreSessions ? (
               <>
                 <div className="col-lg-12">
                   <button
@@ -832,6 +871,53 @@ function Planning() {
                                   </span>
                                 </div>
                               </div>
+                              <div className="session_date pt-1">
+                                <div className="session_date_icon">
+                                  <svg
+                                    width="25px"
+                                    height="25px"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V10M20 10H4M8 3V7M16 3V7"
+                                      stroke="#000000"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                    />
+                                    <rect
+                                      x="6"
+                                      y="12"
+                                      width="3"
+                                      height="3"
+                                      rx="0.5"
+                                      fill="#000000"
+                                    />
+                                    <rect
+                                      x="10.5"
+                                      y="12"
+                                      width="3"
+                                      height="3"
+                                      rx="0.5"
+                                      fill="#000000"
+                                    />
+                                    <rect
+                                      x="15"
+                                      y="12"
+                                      width="3"
+                                      height="3"
+                                      rx="0.5"
+                                      fill="#000000"
+                                    />
+                                  </svg>
+                                  <span className="date">
+                                    {slotAvailable
+                                      ? `Available spots: ${slotAvailable}`
+                                      : "No spots available"}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                             <div className="add_session pt-2">
                               <button
@@ -876,7 +962,12 @@ function Planning() {
                                             selectedDay[session_id].time}
                                         </div>
                                         <div className="card_info_validity">
-                                          {session}
+                                          {session.date}
+                                        </div>
+                                        <div className="card_info_validity">
+                                          {session.available_spots > 0
+                                            ? `Available spots:${session.available_spots}`
+                                            : "No spots available"}
                                         </div>
                                       </div>
                                       <div
@@ -950,74 +1041,87 @@ function Planning() {
                                     )}
                                     {ahead_session.length > 0 ? (
                                       ahead_session.map((session, index) => (
-                                        <div
-                                          className="session_option p-3"
-                                          type="button"
-                                          key={index}
-                                          {...(disableBookMore
-                                            ? {}
-                                            : {
-                                                onClick: () =>
-                                                  handleBookMoreSessions(index),
-                                              })}
-                                        >
-                                          <div className="card_info">
-                                            <div className="card_info_name">
-                                              {selectedDay.length > 0 &&
-                                                selectedDay[session_id].name}
-                                            </div>
-                                            <div className="card_info_price">
-                                              {selectedDay.length > 0 &&
-                                                selectedDay[session_id].time}
-                                            </div>
-                                            <div className="card_info_validity">
-                                              {session}
-                                            </div>
-                                          </div>
-                                          <div
-                                            className="card_close_button"
-                                            style={{ cursor: "pointer" }}
-                                          >
-                                            <svg
-                                              width="25px"
-                                              height="25px"
-                                              viewBox="0 0 24 24"
-                                              fill="none"
-                                              xmlns="http://www.w3.org/2000/svg"
+                                        <>
+                                          {session.available_spots > 0 ? (
+                                            <div
+                                              className="session_option p-3"
+                                              type="button"
+                                              key={index}
+                                              {...(disableBookMore
+                                                ? {}
+                                                : {
+                                                    onClick: () =>
+                                                      handleBookMoreSessions(
+                                                        index
+                                                      ),
+                                                  })}
                                             >
-                                              <path
-                                                d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V10M20 10H4M8 3V7M16 3V7"
-                                                stroke="#000000"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                              />
-                                              <rect
-                                                x="6"
-                                                y="12"
-                                                width="3"
-                                                height="3"
-                                                rx="0.5"
-                                                fill="#000000"
-                                              />
-                                              <rect
-                                                x="10.5"
-                                                y="12"
-                                                width="3"
-                                                height="3"
-                                                rx="0.5"
-                                                fill="#000000"
-                                              />
-                                              <rect
-                                                x="15"
-                                                y="12"
-                                                width="3"
-                                                height="3"
-                                                rx="0.5"
-                                                fill="#000000"
-                                              />
-                                            </svg>
-                                          </div>
-                                        </div>
+                                              <div className="card_info">
+                                                <div className="card_info_name">
+                                                  {selectedDay.length > 0 &&
+                                                    selectedDay[session_id]
+                                                      .name}
+                                                </div>
+                                                <div className="card_info_price">
+                                                  {selectedDay.length > 0 &&
+                                                    selectedDay[session_id]
+                                                      .time}
+                                                </div>
+                                                <div className="card_info_validity">
+                                                  {session.date}
+                                                </div>
+                                                <div className="card_info_validity">
+                                                  {session.available_spots > 0
+                                                    ? `Available spots:${session.available_spots}`
+                                                    : "No spots available"}
+                                                </div>
+                                              </div>
+                                              <div
+                                                className="card_close_button"
+                                                style={{ cursor: "pointer" }}
+                                              >
+                                                <svg
+                                                  width="25px"
+                                                  height="25px"
+                                                  viewBox="0 0 24 24"
+                                                  fill="none"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                  <path
+                                                    d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V10M20 10H4M8 3V7M16 3V7"
+                                                    stroke="#000000"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                  />
+                                                  <rect
+                                                    x="6"
+                                                    y="12"
+                                                    width="3"
+                                                    height="3"
+                                                    rx="0.5"
+                                                    fill="#000000"
+                                                  />
+                                                  <rect
+                                                    x="10.5"
+                                                    y="12"
+                                                    width="3"
+                                                    height="3"
+                                                    rx="0.5"
+                                                    fill="#000000"
+                                                  />
+                                                  <rect
+                                                    x="15"
+                                                    y="12"
+                                                    width="3"
+                                                    height="3"
+                                                    rx="0.5"
+                                                    fill="#000000"
+                                                  />
+                                                </svg>
+                                              </div>
+                                            </div>
+                                          ) : null}
+                                        </>
                                       ))
                                     ) : (
                                       <p className="form_paragraph">
@@ -1130,8 +1234,19 @@ function Planning() {
                                                 onBlur={UserRegistered}
                                               />
                                             </div>
-                                            
                                           </div>
+                                          {showContinueButton ? (
+                                            <>
+                                              <button
+                                                className="btn btn-primary add_session_btn"
+                                                type="button"
+                                                style={{ width: "auto" }}
+                                                onClick={UserRegistered}
+                                              >
+                                                Continue
+                                              </button>
+                                            </>
+                                          ) : null}
                                         </div>
                                         <div className="col-lg-6">
                                           {isUserRegistered == false && (
@@ -1158,7 +1273,9 @@ function Planning() {
                                                   value={inputValues.password}
                                                   onChange={handleInputChange}
                                                 />
-                                                <span className="form_paragraph text-danger">{errorMessages}</span>
+                                                <span className="form_paragraph text-danger">
+                                                  {errorMessages}
+                                                </span>
                                                 <button
                                                   className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon pt-3"
                                                   type="button"
@@ -1297,88 +1414,108 @@ function Planning() {
                                               </div>
                                             </div>
                                           </div>
-                                          <div className="row pt-4">
-                                            <div className="col-lg-12">
-                                              <h4 className="mb-3 fw-semibold">
-                                                Payment
-                                              </h4>
-                                              <p className="mb-4 form_paragraph">
-                                                All transactions are secure and
-                                                encrypted.
-                                              </p>
-                                            </div>
-                                            <div className="dpo_pay">
-                                              <div className="col-md-3">
-                                                <p
-                                                  className="form_paragraph"
-                                                  style={{
-                                                    position: "relative",
-                                                    top: "10px",
-                                                  }}
-                                                >
-                                                  DPO Pay
-                                                </p>
-                                              </div>
-                                              <div className="col-md-9">
-                                                <div className="payment_logos">
-                                                  <img
-                                                    alt="visa"
-                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/0169695890db3db16bfe.svg"
-                                                    role="img"
-                                                    width="50"
-                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
-                                                  />
-                                                  <img
-                                                    alt="master"
-                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/5e3b05b68f3d31b87e84.svg"
-                                                    role="img"
-                                                    width="50"
-                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
-                                                  />
-                                                  <img
-                                                    alt="american express"
-                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/cbbbc36cee664630aa26.svg"
-                                                    role="img"
-                                                    width="50"
-                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
-                                                  />
-                                                  <img
-                                                    alt="mpesa"
-                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/b5f5addb942e4e6228c9.svg"
-                                                    role="img"
-                                                    width="38"
-                                                    height="24"
-                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
-                                                  />
-                                                  <img
-                                                    alt="mpesa"
-                                                    src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/6ae10128cfa7a2f4f9d0.svg"
-                                                    role="img"
-                                                    width="50"
-                                                    className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
-                                                  />
+                                          {remainingCreditClasses >
+                                          number_of_sessions ? (
+                                            <button className="btn book_button">
+                                              {loading ? (
+                                                <RiseLoader
+                                                  color={color}
+                                                  loading={loading}
+                                                  cssOverride={override}
+                                                  size={10}
+                                                  aria-label="Loading Spinner"
+                                                  data-testid="loader"
+                                                />
+                                              ) : (
+                                                `Checkout with remaining credit (${remainingCreditClasses} classes remaining)`
+                                              )}
+                                            </button>
+                                          ) : (
+                                            <>
+                                              <div className="row pt-4">
+                                                <div className="col-lg-12">
+                                                  <h4 className="mb-3 fw-semibold">
+                                                    Payment
+                                                  </h4>
+                                                  <p className="mb-4 form_paragraph">
+                                                    All transactions are secure
+                                                    and encrypted.
+                                                  </p>
+                                                </div>
+                                                <div className="dpo_pay">
+                                                  <div className="col-md-3">
+                                                    <p
+                                                      className="form_paragraph"
+                                                      style={{
+                                                        position: "relative",
+                                                        top: "10px",
+                                                      }}
+                                                    >
+                                                      DPO Pay
+                                                    </p>
+                                                  </div>
+                                                  <div className="col-md-9">
+                                                    <div className="payment_logos">
+                                                      <img
+                                                        alt="visa"
+                                                        src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/0169695890db3db16bfe.svg"
+                                                        role="img"
+                                                        width="50"
+                                                        className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                      />
+                                                      <img
+                                                        alt="master"
+                                                        src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/5e3b05b68f3d31b87e84.svg"
+                                                        role="img"
+                                                        width="50"
+                                                        className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                      />
+                                                      <img
+                                                        alt="american express"
+                                                        src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/cbbbc36cee664630aa26.svg"
+                                                        role="img"
+                                                        width="50"
+                                                        className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                      />
+                                                      <img
+                                                        alt="mpesa"
+                                                        src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/b5f5addb942e4e6228c9.svg"
+                                                        role="img"
+                                                        width="38"
+                                                        height="24"
+                                                        className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                      />
+                                                      <img
+                                                        alt="mpesa"
+                                                        src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/6ae10128cfa7a2f4f9d0.svg"
+                                                        role="img"
+                                                        width="50"
+                                                        className="_1tgdqw61 _1fragemlr _1fragemlm _1fragemm0 _1fragemha"
+                                                      />
+                                                    </div>
+                                                  </div>
                                                 </div>
                                               </div>
-                                            </div>
-                                          </div>
 
-                                          <button
-                                            className="btn book_button"
-                                            href="#checkout"
-                                          >
-                                            {loading ? (
-                                              <RiseLoader
-                                                color={color}
-                                                loading={loading}
-                                                cssOverride={override}
-                                                size={10}
-                                                aria-label="Loading Spinner"
-                                                data-testid="loader"
-                                              />
-                                            ) : (
-                                              "Make payment"
-                                            )}
-                                          </button>
+                                              <button
+                                                className="btn book_button"
+                                                href="#checkout"
+                                              >
+                                                {loading ? (
+                                                  <RiseLoader
+                                                    color={color}
+                                                    loading={loading}
+                                                    cssOverride={override}
+                                                    size={10}
+                                                    aria-label="Loading Spinner"
+                                                    data-testid="loader"
+                                                  />
+                                                ) : (
+                                                  "Make payment"
+                                                )}
+                                              </button>
+                                            </>
+                                          )}
                                         </>
                                       )}
                                     </div>
@@ -1429,4 +1566,4 @@ function Planning() {
     </>
   );
 }
-export default Planning;
+export default Schedules;

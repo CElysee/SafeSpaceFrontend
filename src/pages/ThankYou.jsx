@@ -1,7 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom";
 
 function ThankYou() {
+  const url = useParams();
+  console.log(url);
+  var modalBackdrop = document.getElementsByClassName("modal-backdrop")[0];
+
+  // Set the display property to "none"
+  if (modalBackdrop) {
+    modalBackdrop.style.display = "none";
+  }
   return (
     <section
       className="section bg-beige pt-5"
@@ -31,7 +39,9 @@ function ThankYou() {
                 <a href="mailto:info@safespace.com">info@safespace.com</a>.
                 We're excited to guide you on this yoga journey!
               </p>
-              <Link to="/sign-in" className="btn book_button">Log in to get started</Link>
+              <Link to="/sign-in" className="btn book_button">
+                Log in to get started
+              </Link>
             </div>
           </div>
         </div>

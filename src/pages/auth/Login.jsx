@@ -128,7 +128,7 @@ function Login() {
                             htmlFor="username"
                             className="form-label paragraph"
                           >
-                            Username
+                            Email
                           </label>
                           <input
                             type="email"

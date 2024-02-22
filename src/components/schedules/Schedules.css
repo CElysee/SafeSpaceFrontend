@@ -555,3 +555,6 @@ label:after {
   color: rgba(var(--vz-danger-rgb),var(--vz-text-opacity)) !important;
   
 }
+.modal{
+  position: fixed !important;
+}

@@ -6,16 +6,17 @@ import Register from "../pages/auth/Register";
 import Dashboard from "../pages/user/Dashboard";
 import AdminDashboard from "../pages/admin/Dashboard";
 import ThankYou from "../pages/ThankYou";
-import Planning from "../components/planning/Planning";
+import Schedules from "../components/schedules/Schedules";
 import PaymentConfirmation from "../pages/PaymentConfirmation";
 import PrivateRoutes from "../utils/PrivateRoutes.jsx";
+import NotFound from "../pages/NotFound.jsx";
 
 function Routers() {
   return (
     <Routes>
-      <Route path="/" element={<Planning />} />
+      <Route path="/" element={<Schedules />} />
       <Route path="/book-membership/:id" element={<Home />} />
-      <Route path="/planning" element={<Planning />} />
+      <Route path="/schedules" element={<Schedules />} />
       <Route path="/sign-in" element={<Login />} />
       <Route path="/sign-up" element={<Register />} />
       <Route path="/thank-you" element={<ThankYou />} />
@@ -55,6 +56,7 @@ function Routers() {
       {/* <Route path="/admin/*" element="">
         <Route path="dashboard" element={<AdminDashboard />} />
       </Route> */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
