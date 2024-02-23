@@ -224,6 +224,7 @@ function Schedules() {
     }
   };
   const UserRegistered = async () => {
+    setLoading(true);
     try {
       const response = await axiosInstance.post("/auth/check_username", {
         email: inputValues.email,
@@ -239,10 +240,12 @@ function Schedules() {
       });
       setRemainingCreditClasses(response.data.data.credits);
       setShowContinueButton(false);
+      setLoading(false);
     } catch (error) {
       setIsUserRegistered(false);
       console.error("Error while checking user", error);
       setShowFromReg(false);
+      setLoading(false);
     }
   };
 
@@ -1243,7 +1246,19 @@ function Schedules() {
                                                 style={{ width: "auto" }}
                                                 onClick={UserRegistered}
                                               >
-                                                Continue
+                                                 {loading ? (
+                                                <RiseLoader
+                                                  color={color}
+                                                  loading={loading}
+                                                  cssOverride={override}
+                                                  size={10}
+                                                  aria-label="Loading Spinner"
+                                                  data-testid="loader"
+                                                />
+                                              ) : (
+                                                "Continue"
+                                              )}
+                                                
                                               </button>
                                             </>
                                           ) : null}
