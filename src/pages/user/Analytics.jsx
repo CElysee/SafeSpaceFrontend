@@ -123,7 +123,7 @@ function Analytics() {
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.length > 0 && transactions.map((transaction, index) => (
+                      {transactions.length > 0 && transactions.slice(0, 5).map((transaction, index) => (
                         <tr key={index}>
                           <td>{transaction.id}</td>
                           <td>

@@ -172,7 +172,7 @@ function Analytics() {
                   </thead>
                   <tbody>
                     {allSessions.length > 0 &&
-                      allSessions.map((transaction, index) => (
+                      allSessions.slice(0, 5).map((transaction, index) => (
                         <tr key={index}>
                           <td>{transaction.booking.transaction_ref}</td>
                           <td>

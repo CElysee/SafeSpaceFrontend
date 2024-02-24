@@ -9,6 +9,11 @@ import "react-toastify/dist/ReactToastify.css";
 import "../membershipInfo/MembershipInfo.css";
 import ContentLoader from "react-content-loader";
 import { set } from "date-fns";
+import { useSelector } from "react-redux";
+import {
+  selectUser,
+  selectIsAuthenticated,
+} from "../../features/auth/authSlice";
 
 const override = {
   display: "block",
@@ -49,6 +54,8 @@ function Schedules() {
   const [disableBookMore, setDisableBookMore] = useState(false);
   const [remainingCreditClasses, setRemainingCreditClasses] = useState(0);
   const [number_of_sessions, setNumberOfSessions] = useState(1);
+  const [isDisabled, SetIsDesabled] = useState(false);
+  const [selectedCountryBilling, setSelectedCountryBilling] = useState("");
   const [inputValues, setInputValues] = useState({
     email: "",
     names: "",
@@ -65,9 +72,25 @@ function Schedules() {
     booking_more_sessions: "",
     payment_package_id: "",
   });
-
+  const checkUserCredits = async () => {
+    if (isUserLoggedIn){
+      try {
+        const userCredits = await axiosInstance.get(
+          "/yoga_class_booking/check_user_credits?user_id=31&session_class_name=Hatha%20-%20Safe%20Space",
+          {}
+        );
+        // console.log(userCredits.data)
+        setRemainingCreditClasses(userCredits.data.remaining_credits)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+   
+  };
   const uppercaseWords = (str) =>
     str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
+  const authUser = useSelector(selectUser);
+  const isUserLoggedIn = useSelector(selectIsAuthenticated);
   useEffect(() => {
     const today = new Date();
     const currentDay = today.getDay();
@@ -91,9 +114,35 @@ function Schedules() {
     });
     setStartDate(formattedStartDate);
     setEndDate(formattedEndDate);
+
     const fetchMembership = async () => {
       try {
         const country_response = await axiosInstance.get("/country/list", {});
+        if (isUserLoggedIn) {
+          const userBillingInfo = await axiosInstance.get(
+            `auth/billing_info?user_id=${authUser.userId}`
+          );
+          // console.log(userBillingInfo.data);
+          setInputValues({
+            ...inputValues,
+            email: userBillingInfo.data.billing_email,
+            phone_number: userBillingInfo.data.billing_phone_number,
+            address: userBillingInfo.data.billing_address,
+            city: userBillingInfo.data.billing_city,
+            country_id: userBillingInfo.data.billing_country_id,
+            names: userBillingInfo.data.billing_names,
+          });
+          const savedCountryOption = () => {
+            return {
+              value: userBillingInfo.data.billing_country.id,
+              label: userBillingInfo.data.billing_country.name,
+            };
+          };
+          setSelectedCountryBilling(savedCountryOption);
+          setShowFromReg(true);
+          setShowContinueButton(false);
+          checkUserCredits();
+        }
         const yoga_location = await axiosInstance.get(
           "/yoga_class_location/list",
           {}
@@ -323,19 +372,20 @@ function Schedules() {
         return item.name === "10 CLASSES PASS";
       });
       setYogaPackage(filteredArray);
-    } else if (
-      moreSessions.length <= 3 &&
-      selectedDay[session_id].name !== "Sadhana - Kigali Wellness Hub"
-    ) {
-      const filteredArray = yogaPackageFilter.filter((item) => {
-        if (moreSessions.length >= 3) {
-          return item.name === "5 CLASSES PASS";
-        } else {
-          return item.name === "DROP IN";
-        }
-      });
-      setYogaPackage(filteredArray);
     }
+    // else if (
+    //   moreSessions.length <= 3 &&
+    //   selectedDay[session_id].name !== "Sadhana - Kigali Wellness Hub"
+    // ) {
+    //   const filteredArray = yogaPackageFilter.filter((item) => {
+    //     if (moreSessions.length >= 3) {
+    //       return item.name === "5 CLASSES PASS";
+    //     } else {
+    //       return item.name === "DROP IN";
+    //     }
+    //   });
+    //   setYogaPackage(filteredArray);
+    // }
     const totalSessions = number_of_sessions + 1;
     setNumberOfSessions(totalSessions);
   };
@@ -372,6 +422,7 @@ function Schedules() {
   const makePayment = async (e) => {
     e.preventDefault();
     setLoading(true);
+    SetIsDesabled(true);
     const randomStringRef = Math.random().toString(36).slice(2);
     const booking_more_sessions_date = moreSessions.map(
       (session) => session.date
@@ -426,6 +477,7 @@ function Schedules() {
     } catch (error) {
       console.error("Error making a payment", error);
       setLoading(false);
+      SetIsDesabled(false);
     }
   };
   return (
@@ -1246,19 +1298,18 @@ function Schedules() {
                                                 style={{ width: "auto" }}
                                                 onClick={UserRegistered}
                                               >
-                                                 {loading ? (
-                                                <RiseLoader
-                                                  color={color}
-                                                  loading={loading}
-                                                  cssOverride={override}
-                                                  size={10}
-                                                  aria-label="Loading Spinner"
-                                                  data-testid="loader"
-                                                />
-                                              ) : (
-                                                "Continue"
-                                              )}
-                                                
+                                                {loading ? (
+                                                  <RiseLoader
+                                                    color={color}
+                                                    loading={loading}
+                                                    cssOverride={override}
+                                                    size={10}
+                                                    aria-label="Loading Spinner"
+                                                    data-testid="loader"
+                                                  />
+                                                ) : (
+                                                  "Continue"
+                                                )}
                                               </button>
                                             </>
                                           ) : null}
@@ -1421,6 +1472,9 @@ function Schedules() {
                                                         onChange={
                                                           handleCountryChange
                                                         }
+                                                        value={
+                                                          selectedCountryBilling
+                                                        }
                                                       />
                                                     </div>
                                                   </div>
@@ -1515,6 +1569,7 @@ function Schedules() {
                                               <button
                                                 className="btn book_button"
                                                 href="#checkout"
+                                                disabled={isDisabled}
                                               >
                                                 {loading ? (
                                                   <RiseLoader

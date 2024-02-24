@@ -89,6 +89,7 @@ function Dashboard() {
                       aria-controls="transactions"
                       aria-selected="false"
                       tabIndex="-1"
+                      onClick={handleLogout}
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -97,7 +98,7 @@ function Dashboard() {
                         width="30px"
                         className="fs-20 mb-1"
                         style={{margin: "auto", display: "block"}}
-                        onClick={handleLogout}
+                        
                       >
                         <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
                         <g

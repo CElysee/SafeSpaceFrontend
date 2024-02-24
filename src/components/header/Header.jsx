@@ -1,10 +1,14 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectIsAuthenticated } from "../../features/auth/authSlice";
+import {
+  selectIsAuthenticated,
+  selectUser,
+} from "../../features/auth/authSlice";
 
 function Header() {
   const year = new Date().getFullYear();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const currentUser = useSelector(selectUser);
   return (
     <div>
       <nav
@@ -97,7 +101,25 @@ function Header() {
                 </Link>
               </li>
             </ul>
-            {isAuthenticated ? null : (
+            {isAuthenticated ? (
+              <div className="">
+                {currentUser.role == "admin" ? (
+                  <Link
+                    to={"/admin/dashboard"}
+                    className="btn btn-link fw-medium text-decoration-none text-body"
+                  >
+                    My Account
+                  </Link>
+                ) : (
+                  <Link
+                    to={"/user/dashboard"}
+                    className="btn btn-link fw-medium text-decoration-none text-body"
+                  >
+                    My Account
+                  </Link>
+                )}
+              </div>
+            ) : (
               <div className="">
                 <Link
                   to="/sign-in"

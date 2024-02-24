@@ -9,6 +9,7 @@ const persistConfig = {
 //   whitelist: ["counter"], // list of reducers to persist
 };
 
+
 const persistedReducer = persistReducer(persistConfig, authSlice);
 
 const store = configureStore({

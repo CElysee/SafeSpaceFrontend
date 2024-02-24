@@ -135,7 +135,7 @@ function Login() {
                             name="username"
                             className="form-control"
                             id="username"
-                            placeholder="Enter username"
+                            placeholder="Enter email"
                             value={inputValue.username}
                             onChange={handleInputChange}
                             required
