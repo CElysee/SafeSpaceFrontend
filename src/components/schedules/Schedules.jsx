@@ -72,11 +72,12 @@ function Schedules() {
     booking_more_sessions: "",
     payment_package_id: "",
   });
+  const userInfo = useSelector(selectUser);
   const checkUserCredits = async () => {
     if (isUserLoggedIn){
       try {
         const userCredits = await axiosInstance.get(
-          "/yoga_class_booking/check_user_credits?user_id=31&session_class_name=Hatha%20-%20Safe%20Space",
+          `/yoga_class_booking/check_user_credits?user_id=${userInfo}&session_class_name=${selectedDay[session_id].name}`,
           {}
         );
         // console.log(userCredits.data)
