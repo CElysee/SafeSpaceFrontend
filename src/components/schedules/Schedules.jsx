@@ -72,15 +72,16 @@ function Schedules() {
     booking_more_sessions: "",
     payment_package_id: "",
   });
-  const userInfo = useSelector(selectUser);
+  const authUser = useSelector(selectUser);
+  const isUserLoggedIn = useSelector(selectIsAuthenticated);
   const checkUserCredits = async () => {
     if (isUserLoggedIn) {
       try {
         const userCredits = await axiosInstance.get(
-          `/yoga_class_booking/check_user_credits?user_id=${userInfo.userId}&session_class_name=${selectedDay[session_id].name}`,
+          `/yoga_class_booking/check_user_credits?user_id=${authUser.userId}&session_class_name=${selectedDay[session_id].name}`,
           {}
         );
-        console.log(userCredits.data)
+        console.log(userCredits.data);
         setRemainingCreditClasses(userCredits.data.remaining_credits);
       } catch (error) {
         console.log(error);
@@ -89,8 +90,6 @@ function Schedules() {
   };
   const uppercaseWords = (str) =>
     str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
-  const authUser = useSelector(selectUser);
-  const isUserLoggedIn = useSelector(selectIsAuthenticated);
   useEffect(() => {
     const today = new Date();
     const currentDay = today.getDay();
@@ -286,7 +285,6 @@ function Schedules() {
       );
       // console.log(userBillingInfo);
       if (userBillingInfo.status === 200) {
-        console.log("User billing info", userBillingInfo.data);
         setInputValues({
           ...inputValues,
           email: userBillingInfo.data.billing_email,
@@ -1500,7 +1498,12 @@ function Schedules() {
                                                         // value={
                                                         //   selectedCountryBilling.length > 0 ?  selectedCountryBilling : inputValues.country_id
                                                         // }
-                                                        {...selectedCountryBilling ? { value: selectedCountryBilling } : null}
+                                                        {...(selectedCountryBilling
+                                                          ? {
+                                                              value:
+                                                                selectedCountryBilling,
+                                                            }
+                                                          : null)}
                                                       />
                                                     </div>
                                                   </div>
