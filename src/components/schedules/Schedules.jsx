@@ -228,6 +228,13 @@ function Schedules() {
         // Handle errors, you might want to display an error message to the user
         console.error("Error fetching data:", error);
         setErrorMessages("Error fetching data. Please try again later.");
+        // Reload the page after a delay (e.g., 3 seconds)
+        const reloadTimeout = setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+
+        // Cleanup the timeout to avoid memory leaks
+        return () => clearTimeout(reloadTimeout);
       }
     };
     setSession_id(id);
