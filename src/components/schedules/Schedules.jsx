@@ -38,13 +38,11 @@ function Schedules() {
   const [yogaPackageFilter, setYogaPackageFilter] = useState([]);
   const [yogaPackageId, setYogaPackageId] = useState();
   const [loading, setLoading] = useState(false);
-  // const [isNotRegisted, setIsNotRegistred] = useState(false);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
   const [showFromReg, setShowFromReg] = useState(false);
   const [yogaLocation, setYogaLocation] = useState("");
   const [showBillingForm, setShowBillingForm] = useState(false);
   const [slotAvailable, setSlotAvailable] = useState(false);
-  const [available_time, setAvailableTime] = useState([]);
   const [showBookButton, setShowBookButton] = useState(true);
   const [moreSessions, setMoreSessions] = useState([]);
   const [resetMoreSessions, setResetMoreSessions] = useState([]);
@@ -73,6 +71,25 @@ function Schedules() {
     payment_package_id: "",
   });
   const authUser = useSelector(selectUser);
+  const uppercaseWords = (str) =>
+    str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
+  const today = new Date();
+  const currentDay = today.getDay();
+  const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1); // Adjust for Sunday
+  const lastWeekSunday = new Date(today);
+  lastWeekSunday.setDate(today.getDate() - currentDay - 7);
+  const startOfWeek = new Date(today.setDate(diff));
+  const endOfWeek = new Date(today.setDate(diff + 6));
+  const formattedStartDate = startOfWeek.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "numeric",
+    day: "numeric",
+  });
+  const formattedEndDate = endOfWeek.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "numeric",
+    day: "numeric",
+  });
   const isUserLoggedIn = useSelector(selectIsAuthenticated);
   const checkUserCredits = async () => {
     if (isUserLoggedIn) {
@@ -88,32 +105,89 @@ function Schedules() {
       }
     }
   };
-  const uppercaseWords = (str) =>
-    str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
   useEffect(() => {
-    const today = new Date();
-    const currentDay = today.getDay();
-    const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1); // Adjust for Sunday
-
     // Calculate last week's Sunday date
-    const lastWeekSunday = new Date(today);
-    lastWeekSunday.setDate(today.getDate() - currentDay - 7);
     setStartDate(lastWeekSunday.toISOString().split("T")[0]); // Format as YYYY-MM-DD
-    const startOfWeek = new Date(today.setDate(diff));
-    const endOfWeek = new Date(today.setDate(diff + 6));
-    const formattedStartDate = startOfWeek.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "numeric",
-      day: "numeric",
-    });
-    const formattedEndDate = endOfWeek.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "numeric",
-      day: "numeric",
-    });
     setStartDate(formattedStartDate);
     setEndDate(formattedEndDate);
+    const fetchDays = async () => {
+      try {
+        const response = await axiosInstance.get(`/planning/list`);
+        const yogaSessions = await axiosInstance.get("/yoga_sessions/list");
+        if (response && response.data) {
+          // console.log("Response:", response.data);
+          setDays_list(response.data);
+          setSelectedDay(response.data[0].sessions);
+          setDayActive(0);
+        } else {
+          console.log("Empty response or missing data");
+        }
+        // console.log(yogaSessions.data);
+        setYogaPackage(yogaSessions.data);
+        setYogaPackageFilter(yogaSessions.data);
+      } catch (error) {
+        // Handle specific errors or log them
+        if (error.response) {
+          // The request was made and the server responded with a status code that falls out of the range of 2xx
+          console.log("Error response:", error.response.data);
+          console.log("Status code:", error.response.status);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log("No response received:", error.request);
+        } else {
+          // Something happened in setting up the request that triggered an error
+          console.log("Error during request setup:", error.message);
+        }
+      }
+    };
+    fetchDays();
+  }, []);
 
+  const handleShowPassword = () => {
+    showPassword ? setShowPassword(false) : setShowPassword(true);
+  };
+  const countryOptions = Array.isArray(country)
+    ? country.map((country) => ({
+        value: country.id,
+        label: country.name,
+      }))
+    : [];
+  const handleCountryChange = (selectedOptions) => {
+    const selectedCountry = selectedOptions.value;
+    setInputValues({
+      ...inputValues,
+      country_id: selectedCountry,
+    });
+    setSelectedCountryBilling("");
+  };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setInputValues({
+      ...inputValues,
+      [name]: value,
+    });
+    if (name === "password") {
+      if (value.length < 8) {
+        setErrorMessages("Password must be at least 8 characters");
+        setShowFromReg(false);
+        setShowContinueButton(false);
+      } else {
+        setErrorMessages("");
+        setShowFromReg(true);
+        setShowContinueButton(false);
+      }
+    }
+  };
+  const handleDayActive = (index) => {
+    setDayActive(index);
+    setSelectedDay(days_list[index].sessions);
+    setSession_id(0);
+    setMoreSessions([]);
+    setAheadSession(resetMoreSessions);
+    setDisableBookMore(false);
+    setErrorMessages("");
+  };
+  const handleSession_id = async (id) => {
     const fetchMembership = async () => {
       try {
         const country_response = await axiosInstance.get("/country/list", {});
@@ -156,86 +230,6 @@ function Schedules() {
         setErrorMessages("Error fetching data. Please try again later.");
       }
     };
-    const fetchDays = async () => {
-      try {
-        const response = await axiosInstance.get(`/planning/list`);
-        const yogaSessions = await axiosInstance.get("/yoga_sessions/list");
-        if (response && response.data) {
-          // console.log("Response:", response.data);
-          setDays_list(response.data);
-          setSelectedDay(response.data[0].sessions);
-          setDayActive(0);
-        } else {
-          console.log("Empty response or missing data");
-        }
-        setYogaPackage(yogaSessions.data);
-        setYogaPackageFilter(yogaSessions.data);
-      } catch (error) {
-        // Handle specific errors or log them
-        if (error.response) {
-          // The request was made and the server responded with a status code that falls out of the range of 2xx
-          console.log("Error response:", error.response.data);
-          console.log("Status code:", error.response.status);
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.log("No response received:", error.request);
-        } else {
-          // Something happened in setting up the request that triggered an error
-          console.log("Error during request setup:", error.message);
-        }
-      }
-    };
-    fetchDays();
-    fetchMembership();
-  }, []);
-
-  const handleShowPassword = () => {
-    showPassword ? setShowPassword(false) : setShowPassword(true);
-  };
-  const countryOptions = Array.isArray(country)
-    ? country.map((country) => ({
-        value: country.id,
-        label: country.name,
-      }))
-    : [];
-  const handleCountryChange = (selectedOptions) => {
-    const selectedCountry = selectedOptions.value;
-    setInputValues({
-      ...inputValues,
-      country_id: selectedCountry,
-    });
-    setSelectedCountryBilling("");
-  };
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setInputValues({
-      ...inputValues,
-      [name]: value,
-    });
-    if (name === "password") {
-      if (value.length < 8) {
-        setErrorMessages("Password must be at least 8 characters");
-        setShowFromReg(false);
-        setShowContinueButton(false);
-      } else {
-        setErrorMessages("");
-        setShowFromReg(true);
-        setShowContinueButton(false);
-      }
-    }
-    // const totalSessions = moreSessions.length + number_of_sessions;
-    // setNumberOfSessions(totalSessions);
-  };
-  const handleDayActive = (index) => {
-    setDayActive(index);
-    setSelectedDay(days_list[index].sessions);
-    setSession_id(0);
-    setMoreSessions([]);
-    setAheadSession(resetMoreSessions);
-    setDisableBookMore(false);
-    setErrorMessages("");
-  };
-  const handleSession_id = async (id) => {
     setSession_id(id);
     if (selectedDay[id].name !== "Sadhana - Kigali Wellness Hub") {
       const filteredArray = yogaPackageFilter.filter((item) => {
@@ -271,6 +265,7 @@ function Schedules() {
     } catch (error) {
       console.error("Error fetching session spot available", error);
     }
+    fetchMembership();
   };
   const UserRegistered = async () => {
     setLoading(true);
@@ -502,7 +497,6 @@ function Schedules() {
       SetIsDesabled(false);
     }
   };
-  // console.log(selectedCountryBilling);
   return (
     <>
       <section
@@ -546,7 +540,7 @@ function Schedules() {
       >
         <div className="container">
           <div className="row align-items-center gy-4">
-            {days_list.length > 0 && selectedDay.length > 0 && moreSessions ? (
+            {days_list.length > 0 && selectedDay.length > 0 ? (
               <>
                 <div className="col-lg-12">
                   <button
