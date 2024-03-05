@@ -74,19 +74,18 @@ function Schedules() {
   });
   const userInfo = useSelector(selectUser);
   const checkUserCredits = async () => {
-    if (isUserLoggedIn){
+    if (isUserLoggedIn) {
       try {
         const userCredits = await axiosInstance.get(
-          `/yoga_class_booking/check_user_credits?user_id=${userInfo}&session_class_name=${selectedDay[session_id].name}`,
+          `/yoga_class_booking/check_user_credits?user_id=${userInfo.userId}&session_class_name=${selectedDay[session_id].name}`,
           {}
         );
-        // console.log(userCredits.data)
-        setRemainingCreditClasses(userCredits.data.remaining_credits)
+        console.log(userCredits.data)
+        setRemainingCreditClasses(userCredits.data.remaining_credits);
       } catch (error) {
         console.log(error);
       }
     }
-   
   };
   const uppercaseWords = (str) =>
     str.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
@@ -206,6 +205,7 @@ function Schedules() {
       ...inputValues,
       country_id: selectedCountry,
     });
+    setSelectedCountryBilling("");
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -281,13 +281,37 @@ function Schedules() {
         session_name: selectedDay[session_id].name,
         headers: { "Content-Type": "application/json" },
       });
+      const userBillingInfo = await axiosInstance.get(
+        `auth/billing_info_by_email?email=${inputValues.email}`
+      );
+      // console.log(userBillingInfo);
+      if (userBillingInfo.status === 200) {
+        console.log("User billing info", userBillingInfo.data);
+        setInputValues({
+          ...inputValues,
+          email: userBillingInfo.data.billing_email,
+          phone_number: userBillingInfo.data.billing_phone_number,
+          address: userBillingInfo.data.billing_address,
+          city: userBillingInfo.data.billing_city,
+          country_id: userBillingInfo.data.billing_country_id,
+          names: userBillingInfo.data.billing_names,
+        });
+        const savedCountryOption = () => {
+          return {
+            value: userBillingInfo.data.billing_country.id,
+            label: userBillingInfo.data.billing_country.name,
+          };
+        };
+        setSelectedCountryBilling(savedCountryOption);
+      } else {
+        setInputValues({
+          ...inputValues,
+          names: response.data.data.name,
+          phone_number: response.data.data.phone_number,
+        });
+      }
       setIsUserRegistered(true);
       setShowFromReg(true);
-      setInputValues({
-        ...inputValues,
-        names: response.data.data.name,
-        phone_number: response.data.data.phone_number,
-      });
       setRemainingCreditClasses(response.data.data.credits);
       setShowContinueButton(false);
       setLoading(false);
@@ -298,7 +322,6 @@ function Schedules() {
       setLoading(false);
     }
   };
-
   const showBillingSection = () => {
     setShowBillingForm(true);
     setShowBookButton(false);
@@ -481,6 +504,7 @@ function Schedules() {
       SetIsDesabled(false);
     }
   };
+  // console.log(selectedCountryBilling);
   return (
     <>
       <section
@@ -1473,9 +1497,10 @@ function Schedules() {
                                                         onChange={
                                                           handleCountryChange
                                                         }
-                                                        value={
-                                                          selectedCountryBilling
-                                                        }
+                                                        // value={
+                                                        //   selectedCountryBilling.length > 0 ?  selectedCountryBilling : inputValues.country_id
+                                                        // }
+                                                        {...selectedCountryBilling ? { value: selectedCountryBilling } : null}
                                                       />
                                                     </div>
                                                   </div>

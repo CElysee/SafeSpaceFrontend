@@ -169,7 +169,7 @@ form p.text-danger {
 }
 .book_button {
   color: #fff;
-  background-color: #c1b0d1;
+  background-color: #c1b0d1 !important;
   border-radius: 30px 30px 30px 30px;
   padding: 15px 30px 15px 30px;
   font-weight: 700 !important;
@@ -178,7 +178,7 @@ form p.text-danger {
 }
 .book_button:hover{
   color: #fff;
-  background-color: #C3937E;
+  background-color: #C3937E !important;
   border-radius: 30px 30px 30px 30px;
   padding: 15px 30px 15px 30px;
   font-weight: 700 !important;
