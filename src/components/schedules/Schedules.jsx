@@ -263,7 +263,7 @@ function Schedules() {
         `yoga_class_booking/spot_available?${check_spot_data}`
       );
       const ahead_session = await axiosInstance.get(
-        `/planning/session_weekly_list?yoga_session_name=${selectedDay[id].name}`,
+        `/planning/session_weekly_list?today_date=${days_list[dayActive].days}&yoga_session_name=${selectedDay[id].name}`,
         {}
       );
       setAheadSession(ahead_session.data);
@@ -274,6 +274,7 @@ function Schedules() {
     }
     fetchMembership();
   };
+  // console.log(days_list[dayActive].days);
   const UserRegistered = async () => {
     setLoading(true);
     try {
